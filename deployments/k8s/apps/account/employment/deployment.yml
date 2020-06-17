@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-employment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-employment
+  template:
+    metadata:
+      labels:
+        app: umrs-employment
+    spec:
+      containers:
+      - name: umrs-employment
+        image: gidyon/umrs-employment:v0.3
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        volumeMounts:
+        - name: app-tls
+          mountPath: /app/secrets/keys/
+          readOnly: true
+        - name: app-config
+          mountPath: /app/configs/
+        - name: mysql-creds-staging
+          mountPath: /app/secrets/mysql/
+          readOnly: true
+      volumes:
+      - name: app-tls
+        secret:
+          secretName: employment-tls-v1
+      - name: app-config
+        configMap:
+          name: employment-config-v1
+      - name: mysql-creds-staging
+        secret:
+          secretName: mysql-creds-staging

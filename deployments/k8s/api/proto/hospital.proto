@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package umrs.hospital;
+
+option go_package="hospital";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// Hospital is a health facility
+message Hospital {
+    string hospital_id = 1;
+    string hospital_name = 2;
+    string website_url = 3;
+    string logo_url = 4;
+    string county = 5;
+    string sub_county = 6;
+}
+
+// AddHospitalRequest is request to add a new hospital
+message AddHospitalRequest {
+    Hospital hospital = 1;
+}
+
+// AddHospitalResponse is response after adding a new hospital
+message AddHospitalResponse {
+    string hospital_id = 1;
+    string operation_hash = 2;
+}
+
+// GetHospitalRequest is request to get a hospital resource
+message GetHospitalRequest {
+    string hospital_id = 1;
+}
+
+// DeleteHospitalRequest is request to delete a hospital resource
+message DeleteHospitalRequest {
+    string hospital_id = 1;
+    string hospital_name = 2;
+}
+
+// ListHospitalsRequest is request to get collection of hospitals
+message ListHospitalsRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+}
+
+// SearchHospitalsRequest is request to search for hospitals
+message SearchHospitalsRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+    string query = 3;
+}
+
+// Hospitals is collection of hospitals
+message Hospitals {
+    repeated Hospital hospitals = 1;
+    string next_page_number = 2;
+}
+
+// Manages hospitals in a network
+service HospitalAPI {
+    // Adds a hospital to the network of hospitals
+    rpc AddHospital (AddHospitalRequest) returns (AddHospitalResponse) {
+        // Maps to HTTP POST method
+        // Everything maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/hospitals/add"
+            body: "*"
+        };
+    };
+
+    // Retrieves a single hospital resource
+    rpc GetHospital (GetHospitalRequest) returns (Hospital) {
+        // Maps to HTTP GET method
+        // hospital_id maps to URL path parameter
+        option (google.api.http) = {
+            get: "/api/umrs/hospitals/{hospital_id}"
+        };
+    };
+
+    // Removes a hospital from network of hospitals
+    rpc DeleteHospital (DeleteHospitalRequest) returns (google.protobuf.Empty) {
+        // Maps to HTTP DELETE method
+        // hospital_id maps to URL path parameter
+        option (google.api.http) = {
+            delete: "/api/umrs/hospitals/{hospital_id}"
+        };
+    };
+
+    // Fetches a collection of hospitals
+    rpc ListHospitals (ListHospitalsRequest) returns (Hospitals) {
+        // Maps to HTTP GET method
+        // page_number and page_size maps to the URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/hospitals/action/list"
+        };
+    };
+
+    // Searches for hospitals resource
+    rpc SearchHospitals (SearchHospitalsRequest) returns (Hospitals) {
+        // Maps to HTTP GET method
+        // query, page_number and page_size maps to the URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/hospitals/action/search"
+        };
+    };
+}

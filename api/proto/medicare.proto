@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package umrs.medicare;
+
+option go_package="medicare";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// Medicare is a single health care service
+message Medicare {
+    string hash = 1;
+    string id = 2;
+    string name = 3;
+    string department = 4;
+    string comment = 5;
+    Category category = 6;
+    Billing bill = 7;
+    Hospital hospital = 8;
+    Patient patient = 9;
+    int64 creation_time_seconds = 10;
+    map<string, string> details = 11;
+    bool approved = 12;
+}
+
+// Payment represents the manner in which payment was made
+enum Payment {
+    CASH = 0;
+    INSURANCE_COVER = 1;
+    PROMOTIONAL = 2;
+}
+
+// Category represent the type of health service administered
+enum Category {
+    UNKNOWN = 0;
+    CONSULTATION = 1;
+    LABARATORY = 2;
+    RADIOLOGY = 3;
+    PHARMACY = 4;
+    PRESCRIPTON = 5;
+    HOSPITALIZATION = 6;
+    OPERATION = 7;
+}
+
+// Billing refers to the charges for administering a health service
+message Billing {
+    float amount = 1;
+    Payment payment = 2;
+    map<string, string> details = 3;
+}
+
+// Hospital is the organization a patient receives medicare service
+message Hospital {
+    string hospital_id = 1;
+    string hospital_name = 2;
+}
+
+// Patient is a person receiving health care service
+message Patient {
+    string patient_name = 1;
+    string patient_id = 2;
+    string huduma_number = 3;
+    string phone_number = 4;
+}
+
+message AddMedicareRequest {}
+message AddMedicareResponse {}
+message UpdateMedicareRequest {}
+message DeleteMedicareRequest {}
+message GetMedicareRequest {}
+
+service MedicareAPI {
+    rpc AddMedicare (AddMedicareRequest) returns (AddMedicareResponse);
+    rpc UpdateMedicare (UpdateMedicareRequest) returns (google.protobuf.Empty);
+    rpc DeleteMedicare (DeleteMedicareRequest) returns (google.protobuf.Empty);
+    rpc GetMedicare (GetMedicareRequest) returns (Medicare);
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package umrs.treatment;
+
+option go_package="treatment";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+
+message ApproveTreatmentRequest {}
+message GetTreatmentRequest {}
+message Treatment {}
+message DeleteTreatmentRequest {}
+message GetTreatmentHistoryRequest {}
+message Treatments {}
+
+service TreatmentAPI {
+    rpc ApproveTreatment(ApproveTreatmentRequest) returns (google.protobuf.Empty);
+    rpc GetTreatment (GetTreatmentRequest) returns (Treatment);
+    rpc DeleteTreatment (DeleteTreatmentRequest) returns (google.protobuf.Empty);
+    rpc GetTreatmentHistory (GetTreatmentHistoryRequest) returns (Treatments);
+}

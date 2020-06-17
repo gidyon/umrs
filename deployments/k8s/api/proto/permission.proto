@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package umrs.permission;
+
+option go_package="permission";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// BasicProfile contains basic profile information of the requester
+message BasicProfile {
+    string account_id = 1;
+    string full_name = 2;
+    string profile_thumb_url = 3;
+    string role_at_organization = 4;
+    string organization_name = 5;
+    string organization_id = 6;
+    string work_email = 7; 
+}
+
+// RequestPermissionMethod is the different ways of requesting for permission token
+enum RequestPermissionMethod {
+    UNKNOWN = 0;
+    EMAIL = 1;
+    SMS = 2;
+    USSD = 3;
+    FINGERPRINT = 4;
+    VOICE = 5;
+    FACIAL = 6;
+}
+
+// PermissionMethod is payload for method used to request permission
+message PermissionMethod {
+    RequestPermissionMethod method = 1;
+    string payload = 2;
+    map<string, string> metadata = 3;
+}
+
+
+// Actor performs or is affected by an action
+message Actor {
+    int32 group = 1;
+    string id = 2;
+    string full_name = 3;
+}
+
+// RequestPermissionTokenRequest is request message to get permission token
+message RequestPermissionTokenRequest {
+    BasicProfile requester_profile = 1;
+    PermissionMethod permission_method = 2;
+    Actor requester = 3;
+    Actor patient = 4;
+    string reason = 5;
+}
+
+// RequestPermissionTokenResponse is response after requesting for permission token
+message RequestPermissionTokenResponse {}
+
+message GrantPermissionTokenPayload {
+    string reason = 1;
+    BasicProfile requester_profile = 2;
+}
+
+// GrantPermissionTokenRequest is request message to grant access to patient data
+message GrantPermissionTokenRequest {
+    Actor requester = 1;
+    Actor organization = 2;
+    Actor patient = 3;
+    GrantPermissionTokenPayload payload = 4;
+    string authorization_token = 5;
+}
+
+// GrantPermissionTokenResponse is response after granting permission to a patient data
+message GrantPermissionTokenResponse {
+    string allowed_message = 1;
+    string operation_hash = 2;
+}
+
+// RevokePermissionTokenRequest is request to revoke permission token
+message RevokePermissionTokenRequest {
+    string patient_id = 1;
+    string requester_id = 2;
+}
+
+// RevokePermissionTokenResponse is response after revoking permission
+message RevokePermissionTokenResponse {}
+
+// GetPermissionTokenRequest is request to get permission token
+message GetPermissionTokenRequest {
+    string patient_id = 1;
+    Actor actor = 2;
+}
+
+// GetPermissionTokenResponse is response after requesting for permission token
+message GetPermissionTokenResponse {
+    string access_token = 1;
+    bool allowed = 2;
+}
+
+// GetActivePermissionsRequest is request to get list of active permissions
+message GetActivePermissionsRequest {
+    string patient_id = 1;
+}
+
+// GetActivePermissionsResponse is a collection of active permissions profiles
+message GetActivePermissionsResponse {
+    repeated BasicProfile active_profiles = 1;
+}
+
+// Manages permission to access patient medical data
+service PatientPermissionAPI {
+    // Request to access medical data of patient
+    rpc RequestPermissionToken (RequestPermissionTokenRequest) returns (RequestPermissionTokenResponse) {
+        // Maps to HTTP POST
+        // Everything else maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/permissions/request"
+            body: "*"
+        };
+    };
+
+    // Grant permission to an actor requesting medical data
+    rpc GrantPermissionToken (GrantPermissionTokenRequest) returns (GrantPermissionTokenResponse) {
+        // Maps to HTTP GET
+        // patient_id and requester_id maps to URL path parameters
+        // authorization_token and actor maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/permissions/patient/{patient.id}/grants/{requester.id}"
+        };
+    };
+
+    // Revokes a permission token
+    rpc RevokePermissionToken (RevokePermissionTokenRequest) returns (RevokePermissionTokenResponse) {
+        // Maps to HTTP GET
+        // patient_id and requester_id maps to URL path parameters
+        // actor maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/permissions/patient/{patient_id}/revokes/{requester_id}"
+        };
+    };
+
+    // Fetches permission token
+    rpc GetPermissionToken (GetPermissionTokenRequest) returns (GetPermissionTokenResponse) {
+        // Maps to HTTP GET
+        // patient_id and requester_id maps to URL path parameters
+        option (google.api.http) = {
+            get: "/api/umrs/permissions/patient/{patient_id}/token/{actor.id}"
+        };
+    };
+
+    // Get list of actor allowed access
+    rpc GetActivePermissions (GetActivePermissionsRequest) returns (GetActivePermissionsResponse) {
+        // Maps to HTTP GET
+        // patient_id and requester_id maps to URL path parameters
+        option (google.api.http) = {
+            get: "/api/umrs/permissions/patient/{patient_id}/allowed"
+        };
+    };
+}

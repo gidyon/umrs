@@ -1,0 +1,23 @@
+serviceVersion: v1/beta
+serviceName: umrs_ledger
+servicePort: 9090
+logging:
+  level: 1
+  timeFormat: 2006-01-02T15:04:05Z07:00
+  disabled: true
+security:
+  tlsCert: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/cert.pem
+  tlsKey: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/key.pem
+  serverName: localhost
+databases:
+  sqlDatabase:
+    required: false
+  redisDatabase:
+    required: true
+    address: localhost:6379
+    host: localhost
+    port: 6379
+    schema: db
+    metadata:
+      name: redis
+      useRediSearch: false

@@ -1,0 +1,35 @@
+serviceVersion: v1/beta
+serviceName: umrs_patient
+servicePort: 443
+logging:
+  level: 1
+  timeFormat: 2006-01-02T15:04:05Z07:00
+  disabled: true
+security:
+  tlsCert: /app/certs/patient/cert.pem
+  tlsKey: /app/certs/patient/key.pem
+  serverName: patients.umrs.co.ke
+databases:
+  sqlDatabase:
+    required: true
+    address: umrs_mysql:3306
+    host: umrs_mysql
+    port: 3306
+    userFile: /app/secrets/mysql/user
+    passwordFile: /app/secrets/mysql/password
+    schemaFile: /app/secrets/mysql/schema
+    metadata:
+      name: mysql
+      dialect: mysql
+      orm: gorm
+  redisDatabase:
+    required: false
+externalServices:
+- name: ledger
+  type: ledger
+  required: true
+  address: umrs_ledger:443
+  host: umrs_ledger
+  port: 443
+  tlsCert: /app/certs/ledger/cert.pem
+  serverName: ledger.umrs.co.ke

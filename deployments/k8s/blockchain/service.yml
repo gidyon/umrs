@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: umrs-ledger
+  labels:
+    app: umrs
+spec:
+  clusterIP: None
+  selector:
+    app: umrs-ledger
+  ports:
+  - port: 80
+    targetPort: https
+    name: http
+    protocol: TCP
+  - port: 443
+    targetPort: https
+    name: https
+    protocol: TCP

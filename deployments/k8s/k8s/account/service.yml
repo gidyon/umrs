@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: umrs-account
+  labels:
+    app: umrs-account
+spec:
+  clusterIP: None
+  selector:
+    app: umrs-account
+  ports:
+  - port: 443
+    name: https
+    targetPort: https
+    protocol: TCP
+  - port: 80
+    name: http
+    targetPort: https
+    protocol: TCP

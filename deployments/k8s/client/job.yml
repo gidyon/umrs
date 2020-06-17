@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: umrs-ledger-client
+  labels:
+    app: umrs
+spec:
+  completions: 2
+  parallelism: 5
+  backoffLimit: 4
+  template:
+    metadata:
+      name: umrs-ledger-client
+      labels:
+        app: umrs-ledger-client
+    spec:
+      containers:
+      - name: umrs-ledger-client
+        image: gidyon/umrs-ledger-client:v0.1
+        args: ["--mysql"]
+        imagePullPolicy: Always
+        env:
+        - name: ledger_ADDRESS
+          value: umrs-ledger
+        - name: ledger_SERVER
+          value: ledger.umrs.net
+        - name: TLS_CERT_FILE
+          value: /app/secrets/keys/cert
+        volumeMounts:
+          - name: ledger-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+      volumes:
+      - name: ledger-tls
+        secret:
+          secretName: ledger-tls-v1
+      restartPolicy: Never

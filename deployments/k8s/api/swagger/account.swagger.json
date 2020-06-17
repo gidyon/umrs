@@ -1,0 +1,1092 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "account.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/umrs/accounts/action/activate": {
+      "get": {
+        "summary": "Activates a created account",
+        "operationId": "Activate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/accountActivateResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/action/exists": {
+      "get": {
+        "summary": "Checks if an account exists",
+        "operationId": "Exist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/accountExistResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "national_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/action/list": {
+      "get": {
+        "summary": "Fetches collection of accounts",
+        "operationId": "ListAccounts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/accountAccounts"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "list_criteria.filter",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.show_admins",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.show_users",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.show_active_accounts",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.show_inactive_accounts",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.show_blocked_accounts",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.show_males",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.show_females",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.filter_creation_date",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.created_from",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "list_criteria.created_until",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "list_criteria.filter_account_labels",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "list_criteria.labels",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "FULL_VIEW",
+              "LIST_VIEW",
+              "SEARCH_VIEW",
+              "BASIC_VIEW"
+            ],
+            "default": "FULL_VIEW"
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/action/search": {
+      "get": {
+        "summary": "Searches for accounts",
+        "operationId": "SearchAccounts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/accountAccounts"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "search_criteria.filter",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.show_admins",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.show_users",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.show_active_accounts",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.show_inactive_accounts",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.show_blocked_accounts",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.show_males",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.show_females",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.filter_creation_date",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.created_from",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "search_criteria.created_until",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "search_criteria.filter_account_labels",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "search_criteria.labels",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "FULL_VIEW",
+              "LIST_VIEW",
+              "SEARCH_VIEW",
+              "BASIC_VIEW"
+            ],
+            "default": "FULL_VIEW"
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/activate": {
+      "post": {
+        "summary": "Activates account; only admins",
+        "operationId": "AdminActivate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountChangeAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/block": {
+      "post": {
+        "summary": "Blocks an account",
+        "operationId": "BlockAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountChangeAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/change": {
+      "post": {
+        "summary": "Changes the account type",
+        "operationId": "ChangeAccountType",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountChangeAccountTypeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/create": {
+      "post": {
+        "summary": "Registers a new user",
+        "operationId": "Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/accountCreateResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountCreateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/login": {
+      "post": {
+        "summary": "Logins a user into their account",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/accountLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountLoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/unblock": {
+      "post": {
+        "summary": "Unblocks a blocked account",
+        "operationId": "UnBlockAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountChangeAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/undelete": {
+      "post": {
+        "summary": "Restores an account previously deleted",
+        "operationId": "Undelete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountChangeAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/{account_id}": {
+      "get": {
+        "summary": "Retrieves a user account",
+        "operationId": "Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/accountAccount"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "FULL_VIEW",
+              "LIST_VIEW",
+              "SEARCH_VIEW",
+              "BASIC_VIEW"
+            ],
+            "default": "FULL_VIEW"
+          },
+          {
+            "name": "privileged",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "with_national_id",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      },
+      "delete": {
+        "summary": "Deletes a user account",
+        "operationId": "Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      },
+      "put": {
+        "summary": "Updates s user account",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountUpdateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    },
+    "/api/umrs/accounts/{account_id}/private": {
+      "put": {
+        "summary": "Updates user private profile  account information",
+        "operationId": "UpdatePrivate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountUpdatePrivateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "accountAccount": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "national_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "birth_date": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "nationality": {
+          "type": "string"
+        },
+        "profile_url_thumb": {
+          "type": "string"
+        },
+        "profile_url_normal": {
+          "type": "string"
+        },
+        "account_type": {
+          "$ref": "#/definitions/accountAccountType"
+        },
+        "account_state": {
+          "$ref": "#/definitions/accountAccountState"
+        },
+        "account_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trusted_devices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "Account contains information about user entity. Can be a user or admin"
+    },
+    "accountAccountState": {
+      "type": "string",
+      "enum": [
+        "BLOCKED",
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      "default": "BLOCKED",
+      "title": "AccountState represent the state of an account at any point"
+    },
+    "accountAccountType": {
+      "type": "string",
+      "enum": [
+        "ADMIN_VIEWER",
+        "ADMIN_OWNER",
+        "ADMIN_EDITOR",
+        "USER_OWNER"
+      ],
+      "default": "ADMIN_VIEWER",
+      "title": "AccountType is the type of an account"
+    },
+    "accountAccountView": {
+      "type": "string",
+      "enum": [
+        "FULL_VIEW",
+        "LIST_VIEW",
+        "SEARCH_VIEW",
+        "BASIC_VIEW"
+      ],
+      "default": "FULL_VIEW",
+      "title": "AccountView returns only subset of account information"
+    },
+    "accountAccounts": {
+      "type": "object",
+      "properties": {
+        "next_page_token": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/accountAccount"
+          }
+        }
+      },
+      "title": "Accounts is a collection of user accounts"
+    },
+    "accountActivateResponse": {
+      "type": "object",
+      "title": "ActivateResponse is response after activating an account"
+    },
+    "accountChangeAccountRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "super_admin_id": {
+          "type": "string"
+        }
+      },
+      "title": "ChangeAccountRequest is request to mutate an account type"
+    },
+    "accountChangeAccountTypeRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "super_admin_id": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/accountAccountType"
+        }
+      },
+      "title": "ChangeAccountType is request to change account type"
+    },
+    "accountCreateRequest": {
+      "type": "object",
+      "properties": {
+        "account_label": {
+          "type": "string"
+        },
+        "account": {
+          "$ref": "#/definitions/accountAccount"
+        },
+        "private_account": {
+          "$ref": "#/definitions/accountPrivateAccount"
+        },
+        "by_admin": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "admin_id": {
+          "type": "string"
+        }
+      },
+      "title": "CreateRequest is request to create an account"
+    },
+    "accountCreateResponse": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        }
+      },
+      "title": "CreateResponse is response after creating an account"
+    },
+    "accountCreds": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "national_id": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "Creds is request to login using national_id, email or phone number"
+    },
+    "accountCriteria": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "show_admins": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "show_users": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "show_active_accounts": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "show_inactive_accounts": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "show_blocked_accounts": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "show_males": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "show_females": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "filter_creation_date": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "created_from": {
+          "type": "string",
+          "format": "int64"
+        },
+        "created_until": {
+          "type": "string",
+          "format": "int64"
+        },
+        "filter_account_labels": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "Criteria contains filter criteria filtering colections of accounts"
+    },
+    "accountExistResponse": {
+      "type": "object",
+      "properties": {
+        "exists": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "ExistResponse is response after checking whether account exist"
+    },
+    "accountFacebook": {
+      "type": "object",
+      "properties": {
+        "fb_profile": {
+          "$ref": "#/definitions/accountSocialProfile"
+        }
+      },
+      "title": "Facebook is request to login with facebook"
+    },
+    "accountGoogle": {
+      "type": "object",
+      "properties": {
+        "google_profile": {
+          "$ref": "#/definitions/accountSocialProfile"
+        }
+      },
+      "title": "Google is request to login with google"
+    },
+    "accountLoginRequest": {
+      "type": "object",
+      "properties": {
+        "facebook": {
+          "$ref": "#/definitions/accountFacebook"
+        },
+        "google": {
+          "$ref": "#/definitions/accountGoogle"
+        },
+        "twitter": {
+          "$ref": "#/definitions/accountTwitter"
+        },
+        "creds": {
+          "$ref": "#/definitions/accountCreds"
+        },
+        "group": {
+          "type": "string"
+        }
+      },
+      "title": "LoginRequest is request to login"
+    },
+    "accountLoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "account_id": {
+          "type": "string"
+        },
+        "account_state": {
+          "type": "string"
+        },
+        "account_type": {
+          "type": "string"
+        },
+        "account_group": {
+          "type": "string"
+        }
+      },
+      "title": "LoginResponse is response after login"
+    },
+    "accountPrivateAccount": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "confirm_password": {
+          "type": "string"
+        },
+        "security_question": {
+          "type": "string"
+        },
+        "security_answer": {
+          "type": "string"
+        }
+      },
+      "title": "PrivateAccount contains account sensitive information such as password and security QA"
+    },
+    "accountSocialProfile": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "email_address": {
+          "type": "string"
+        },
+        "profile_url": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "birth_date": {
+          "type": "string"
+        }
+      },
+      "title": "SocialProfile is profile information from third parties"
+    },
+    "accountTwitter": {
+      "type": "object",
+      "properties": {
+        "twitter_profile": {
+          "$ref": "#/definitions/accountSocialProfile"
+        }
+      },
+      "title": "Twitter is request to login with twitter"
+    },
+    "accountUpdatePrivateRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "private_account": {
+          "$ref": "#/definitions/accountPrivateAccount"
+        }
+      },
+      "title": "UpdatePrivateRequest is request to update an account private information"
+    },
+    "accountUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "account": {
+          "$ref": "#/definitions/accountAccount"
+        }
+      },
+      "title": "UpdateRequest is request to update an account"
+    }
+  }
+}

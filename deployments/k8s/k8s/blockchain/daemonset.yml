@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: umrs-ledger
+  labels:
+    app: umrs
+spec:
+  template:
+    metadata:
+      labels:
+        app: umrs-ledger
+    spec:
+      minReadySeconds: 60
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+      nodeSelector:
+        master: true
+      containers:
+      - name: umrs-ledger
+        image: gidyon/umrs-ledger:v0.1
+        resources:
+          requests:
+            cpu: 200m
+            memory: 100Mi
+        ports:
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        env:
+        - name: DB_FILE
+          value: /var/lib/umrs/ledgerdb
+        - name: REDIS_ADDRESS
+          value: umrs-orderer
+        - name: ledger_NETWORK
+          value: umrs_network
+        - name: ledger_LIST
+          value: umrs_list
+        - name: SERVICE_PORT
+          value: 443
+        - name: TLS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: umrs-ledger-tls
+              key: key.pem
+        - name: TLS_CERT
+          valueFrom:
+            secretKeyRef:
+              name: umrs-ledger-tls
+              key: cert.pem
+        volumeMounts:
+        - name: umrs-ledger
+          mountPath: /var/lib/umrs/ledgerdb
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: ledger-tls
+        secret:
+          secretName: umrs-ledger-tls
+      - name: umrs-ledger
+        hostPath:
+          path: /home/umrs/ledgerdb
+          type: DirectoryOrCreate

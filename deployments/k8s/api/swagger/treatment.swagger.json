@@ -1,0 +1,329 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "treatment.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/umrs/patients/{patient.id}/treatments": {
+      "post": {
+        "summary": "Adds treatment information for a patient into the ledger",
+        "operationId": "AddTreatment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/treatmentHashResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "patient.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/treatmentAddTreatmentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TreatmentAPI"
+        ]
+      }
+    },
+    "/api/umrs/patients/{patient_id}/treatments/{treatment_hash}": {
+      "get": {
+        "summary": "Retrieves treatment information",
+        "operationId": "GetTreatment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/treatmentGetTreatmentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "treatment_hash",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "is_owner",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "access_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TreatmentAPI"
+        ]
+      }
+    },
+    "/api/umrs/patients/{updated_treatment.patient.id}/treatments": {
+      "post": {
+        "summary": "Updates treatment information for a patient",
+        "operationId": "UpdateTreatment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/treatmentHashResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "updated_treatment.patient.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/treatmentUpdateTreatmentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TreatmentAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "treatmentActor": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "id": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        }
+      },
+      "title": "Actor performs or is affected by an action"
+    },
+    "treatmentAddTreatmentRequest": {
+      "type": "object",
+      "properties": {
+        "patient": {
+          "$ref": "#/definitions/treatmentActor"
+        },
+        "hospital": {
+          "$ref": "#/definitions/treatmentHospital"
+        },
+        "treatment_info": {
+          "$ref": "#/definitions/treatmentTreatmentData"
+        },
+        "uploader": {
+          "$ref": "#/definitions/treatmentActor"
+        }
+      },
+      "title": "AddTreatmentRequest is request to add patient treatment information"
+    },
+    "treatmentGetTreatmentResponse": {
+      "type": "object",
+      "properties": {
+        "treatment_hash": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "int64"
+        },
+        "patient": {
+          "$ref": "#/definitions/treatmentActor"
+        },
+        "hospital": {
+          "$ref": "#/definitions/treatmentHospital"
+        },
+        "uploader": {
+          "$ref": "#/definitions/treatmentActor"
+        },
+        "treatment_info": {
+          "$ref": "#/definitions/treatmentTreatmentData"
+        }
+      },
+      "title": "GetTreatmentResponse response after getting treatment"
+    },
+    "treatmentHashResponse": {
+      "type": "object",
+      "properties": {
+        "operation_hash": {
+          "type": "string"
+        },
+        "patient_id": {
+          "type": "string"
+        }
+      },
+      "title": "HashResponse is response for operations that add items to the ledger"
+    },
+    "treatmentHospital": {
+      "type": "object",
+      "properties": {
+        "hospital_id": {
+          "type": "string"
+        },
+        "hospital_name": {
+          "type": "string"
+        }
+      },
+      "title": "Hospital is the organization a patient receives treatment"
+    },
+    "treatmentPrescription": {
+      "type": "object",
+      "properties": {
+        "drug": {
+          "type": "string"
+        },
+        "cost": {
+          "type": "number",
+          "format": "float"
+        }
+      },
+      "title": "Prescription is a drug prescription"
+    },
+    "treatmentTest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "cost": {
+          "type": "number",
+          "format": "float"
+        },
+        "images_url": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "Test is labaratory or radiology test on a patient"
+    },
+    "treatmentTreatmentData": {
+      "type": "object",
+      "properties": {
+        "treatment_hash": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "int64"
+        },
+        "entry_fee": {
+          "type": "number",
+          "format": "float"
+        },
+        "triage_details": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "symptoms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "observations": {
+          "type": "string"
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/treatmentTest"
+          }
+        },
+        "diagnosis": {
+          "type": "string"
+        },
+        "prescriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/treatmentPrescription"
+          }
+        },
+        "hospitalized": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "referrals": {
+          "type": "string"
+        },
+        "additional_comments": {
+          "type": "string"
+        },
+        "additional_details": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "TreatmentData contains treatment information for a patient"
+    },
+    "treatmentUpdateTreatmentRequest": {
+      "type": "object",
+      "properties": {
+        "treatment_hash": {
+          "type": "string"
+        },
+        "updated_treatment": {
+          "$ref": "#/definitions/treatmentAddTreatmentRequest"
+        }
+      },
+      "title": "UpdateTreatmentRequest is request to update treatment information"
+    }
+  }
+}

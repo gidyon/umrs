@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-permission-chaincode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-permission
+  template:
+    metadata:
+      labels:
+        app: umrs-permission
+    spec:
+      containers:
+      - name: umrs-permission-chaincode
+        image: gidyon/umrs-permission-chaincode:v0.4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        env:
+        - name: REQUEST_ACCESS_TEMPLATE_FILE
+          value: /app/configs/templates/request-template-v1.html
+        - name: PERMISSION_BASE_URL
+          value: https://52.14.243.42:30910/
+        volumeMounts:
+          - name: app-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+          - name: ledger-tls
+            mountPath: /app/secrets/keys/ledger/
+            readOnly: true
+          - name: notification-tls
+            mountPath: /app/secrets/keys/notification/
+          - name: app-config
+            mountPath: /app/configs/
+            readOnly: true
+          - name: permission-template
+            mountPath: /app/configs/templates
+      volumes:
+      - name: ledger-tls
+        secret:
+          secretName: umrs-ledger-tls
+      - name: notification-tls
+        secret:
+          secretName: umrs-notification-tls
+      - name: app-tls
+        secret:
+          secretName: umrs-permission-tlsv1
+      - name: app-config
+        configMap:
+          name: umrs-permission-configv1
+      - name: permission-template
+        configMap:
+          name: umrs-permission-templates

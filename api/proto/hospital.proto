@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+package umrs.hospital;
+
+option go_package="hospital";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// Hospital is a health facility
+message Hospital {
+    string hospital_id = 1;
+    string hospital_name = 2;
+    string website_url = 3;
+    string logo_url = 4;
+    string county = 5;
+    string sub_county = 6;
+    repeated string admin_emails = 7;
+    bool permission = 8;
+}
+
+// AddHospitalRequest is request to add a new hospital
+message AddHospitalRequest {
+    Hospital hospital = 1;
+}
+
+// HashResponse is response after mutating a hospital
+message HashResponse {
+    string hospital_id = 1;
+    string operation_hash = 2;
+}
+
+// GetHospitalRequest is request to get a hospital resource
+message GetHospitalRequest {
+    string hospital_id = 1;
+}
+
+// DeleteHospitalRequest is request to delete a hospital resource
+message DeleteHospitalRequest {
+    string hospital_id = 1;
+    string hospital_name = 2;
+    string reason = 3;
+}
+
+// UpdateHospitalRequest is request to update a hospital resource
+message UpdateHospitalRequest {
+    string hospital_id = 1;
+    Hospital hospital = 2;
+    bool suspend = 3;
+    string reason = 4;
+}
+
+// ListHospitalsRequest is request to get collection of hospitals
+message ListHospitalsRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+}
+
+// SearchHospitalsRequest is request to search for hospitals
+message SearchHospitalsRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+    string query = 3;
+}
+
+// Hospitals is collection of hospitals
+message Hospitals {
+    repeated Hospital hospitals = 1;
+    string next_page_number = 2;
+}
+
+// CheckSuspensionRequest is request to check whether a hospital is suspended
+message CheckSuspensionRequest {
+    string hospital_id = 1;
+}
+
+// CheckSuspensionResponse is result after checking whether a hospital is suspended 
+message CheckSuspensionResponse {
+    bool suspended = 1;
+}
+
+// Manages hospitals in a network
+service HospitalAPI {
+    // Adds a hospital to the network of hospitals
+    rpc AddHospital (AddHospitalRequest) returns (HashResponse) {
+        // Maps to HTTP POST method
+        // Everything maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/hospitals/add"
+            body: "*"
+        };
+    };
+
+    // Retrieves a single hospital resource
+    rpc GetHospital (GetHospitalRequest) returns (Hospital) {
+        // Maps to HTTP GET method
+        // hospital_id maps to URL path parameter
+        option (google.api.http) = {
+            get: "/api/umrs/hospitals/{hospital_id}"
+        };
+    };
+
+    // Removes a hospital from network of hospitals
+    rpc DeleteHospital (DeleteHospitalRequest) returns (google.protobuf.Empty) {
+        // Maps to HTTP DELETE method
+        // hospital_id maps to URL path parameter
+        // hospital_name and reason maps to URL queries
+        option (google.api.http) = {
+            delete: "/api/umrs/hospitals/{hospital_id}"
+        };
+    };
+
+    // Updates a hospital resource
+    rpc UpdateHospital (UpdateHospitalRequest) returns (HashResponse) {
+        // Maps to HTTP PUT method
+        // hospital_id maps to URL path parameter
+        // hospital and other fields maps to request body
+        option (google.api.http) = {
+            put: "/api/umrs/hospitals/{hospital_id}"
+            body: "*"
+        };
+    };
+
+    // Fetches a collection of hospitals
+    rpc ListHospitals (ListHospitalsRequest) returns (Hospitals) {
+        // Maps to HTTP GET method
+        // page_number and page_size maps to the URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/hospitals/action/list"
+        };
+    };
+
+    // Searches for hospitals resource
+    rpc SearchHospitals (SearchHospitalsRequest) returns (Hospitals) {
+        // Maps to HTTP GET method
+        // query, page_number and page_size maps to the URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/hospitals/action/search"
+        };
+    };
+
+    // Checks whether a hospital is suspended
+    rpc CheckSuspension (CheckSuspensionRequest) returns (CheckSuspensionResponse) {
+        // Maps to HTTP GET method
+        option (google.api.http) = {
+            get: "/api/umrs/hospitals/action/suspended/{hospital_id}"
+        };
+    };
+}

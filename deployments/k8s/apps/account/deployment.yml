@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-account
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-account
+  template:
+    metadata:
+      labels:
+        app: umrs-account
+    spec:
+      containers:
+      - name: umrs-account
+        image: gidyon/umrs-account:v0.7
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        env:
+        - name: CREATE_ACCOUNT_TEMPLATE_FILE
+          value: /app/templates/create.html
+        - name: ACTIVATE_ACCOUNT_TEMPLATE_FILE
+          value: /app/templates/activate.html
+        - name: BLOCK_ACCOUNT_TEMPLATE_FILE
+          value: /app/templates/block.html
+        - name: UNBLOCK_ACCOUNT_TEMPLATE_FILE
+          value: /app/templates/unblock.html
+        - name: DELETE_ACCOUNT_TEMPLATE_FILE
+          value: /app/templates/delete.html
+        - name: UNDELETE_ACCOUNT_TEMPLATE_FILE
+          value: /app/templates/undelete.html
+        - name: CHANGE_ACCOUNT_TEMPLATE_FILE
+          value: /app/templates/change.html
+        volumeMounts:
+          - name: app-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+          - name: notification-tls
+            mountPath: /app/secrets/keys/notification
+            readOnly: true
+          - name: app-config
+            mountPath: /app/configs/
+          - name: app-templates
+            mountPath: /app/templates/
+          - name: mysql-creds-staging
+            mountPath: /app/secrets/mysql/
+            readOnly: true
+      volumes:
+      - name: app-tls
+        secret:
+          secretName: umrs-account-tls
+      - name: notification-tls
+        secret:
+          secretName: umrs-notification-tls
+      - name: mysql-creds-staging
+        secret:
+          secretName: mysql-creds-staging
+      - name: app-config
+        configMap:
+          name: umrs-account-config
+      - name: app-templates
+        configMap:
+          name: umrs-account-templates

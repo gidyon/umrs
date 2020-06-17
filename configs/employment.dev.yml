@@ -1,0 +1,26 @@
+serviceVersion: v1/beta
+serviceName: umrs_employment
+servicePort: 7070
+logging:
+  level: 1
+  timeFormat: 2006-01-02T15:04:05Z07:00
+  disabled: true
+security:
+  tlsCert: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/cert.pem
+  tlsKey: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/key.pem
+  serverName: localhost
+databases:
+  sqlDatabase:
+    required: true
+    address: ec2-18-218-27-110.us-east-2.compute.amazonaws.com:30760
+    host: localhost
+    port: 3306
+    user: root
+    password: hakty11
+    schema: umrs
+    metadata:
+      name: mysql
+      dialect: mysql
+      orm: gorm
+  redisDatabase:
+    required: false

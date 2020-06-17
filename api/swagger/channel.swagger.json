@@ -1,0 +1,227 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "channel.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/umrs/channels/action/list": {
+      "get": {
+        "summary": "Retrieves a collection of channels resource",
+        "operationId": "ListChannels",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/channelListChannelsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "ChannelAPI"
+        ]
+      }
+    },
+    "/api/umrs/channels/create": {
+      "post": {
+        "summary": "Creates a new subscriber channel",
+        "operationId": "CreateChannel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/channelCreateChannelResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/channelCreateChannelRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ChannelAPI"
+        ]
+      }
+    },
+    "/api/umrs/channels/{channel_id}": {
+      "get": {
+        "summary": "Retrieves a single channel resource",
+        "operationId": "GetChannel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/channelChannel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ChannelAPI"
+        ]
+      },
+      "delete": {
+        "summary": "Removes a subscribers channel",
+        "operationId": "DeleteChannel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ChannelAPI"
+        ]
+      },
+      "put": {
+        "summary": "Updates an existing channel resource",
+        "operationId": "UpdateChannel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "channel_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/channelUpdateChannelRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ChannelAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "channelChannel": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "string"
+        },
+        "created_time": {
+          "type": "string"
+        },
+        "subscribers": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "Channel is a publisher network with subscribers"
+    },
+    "channelCreateChannelRequest": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "$ref": "#/definitions/channelChannel"
+        }
+      },
+      "title": "CreateChannelRequest is request to create a new channel"
+    },
+    "channelCreateChannelResponse": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "string"
+        }
+      },
+      "title": "CreateChannelResponse is response after creating a channel"
+    },
+    "channelListChannelsResponse": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/channelChannel"
+          }
+        },
+        "next_page_token": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "ListChannelsResponse is response containing collection of channel resource"
+    },
+    "channelUpdateChannelRequest": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "string"
+        },
+        "channel": {
+          "$ref": "#/definitions/channelChannel"
+        }
+      },
+      "title": "UpdateChannelRequest request to update a channel resource"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "umrs-hospital-hpa"
+  namespace: "default"
+  labels:
+    app: "umrs-hospital"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "umrs-hospital-chaincode"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80

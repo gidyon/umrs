@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+option go_package="notification";
+
+package umrs.notification;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// Notification is a message containing notification information
+message Notification {
+    // Id of the notification
+    string notification_id = 1;
+    // Owner of the notification
+    string owner_id = 2;
+    // Whether the owner is an admin
+    bool is_admin = 3;
+    // The priority of the notification
+    Priority priority = 4;
+    // Method the notification will be dispatched
+    SendMethod send_method = 5;
+    // Notification content
+    NotificationContent content = 6;
+    // Timestamp the notification was created in seconds
+    int64 create_time_sec = 7;
+    // Notification payload
+    oneof payload {
+        // Email Notification
+        EmailNotification email_notification = 8;
+        // SMS Notification
+        SMSNotification sms_notification = 9;
+        // USSDNotification notification
+        USSDNotification ussd_notification = 10;
+        // Call Notification
+        CallNotification call_notification = 11;
+        // EmailAndSMSNotification Notification
+        EmailAndSMSNotification email_and_sms = 12;
+    }
+    // Name of the bulk channel
+    string bulk_channel = 13;
+    // Whether to send the sms to multiple destination
+    bool bulk = 14;
+    // Whether to save the notification in database
+    bool save = 15;
+    // Whether the notification has been read
+    bool seen = 16;
+}
+
+// NotificationContent is content of a notification
+message NotificationContent {
+    string subject = 1;
+    string data = 2;
+}
+
+// EmailNotification is an email notification
+message EmailNotification {
+    string from = 1;
+    string to = 2;
+    string subject = 3;
+    string body_content_type = 4;
+    string body = 5;
+}
+
+// SMSNotification is an SMS notification
+message SMSNotification {
+    string keyword = 1;
+    string destination_phone = 2;
+    string message = 3;
+}
+
+// EmailAndSMSNotification is email and SMS notification combined
+message EmailAndSMSNotification {
+    EmailNotification email_notification = 1;
+    SMSNotification sms_notification = 2;
+}
+
+// USSDNotification is a USSD popup notification
+message USSDNotification {}
+
+// CallNotification is a call notification
+message CallNotification {}
+
+// Priority represents the level of priority for a notification
+enum Priority {
+    MEDIUM = 0;
+    HIGH = 1;
+    LOW = 2;
+}
+
+// SendMethod is the method used to send a notification
+enum SendMethod {
+    EMAIL = 0;
+    SMS = 1;
+    USSD = 2;
+    CALL = 3;
+    EMAIL_AND_SMS = 4;
+}
+
+// AdminLevel is level assigned to an admin
+enum AdminLevel {
+    VIEWER = 0; // Read-only;
+    EDITOR = 1; // Read-Write; specific writes
+    OWNER = 2; // Full control; sudo
+}
+
+// AdminCreds is request to authenticate an admin
+message AdminCreds {
+    string admin_id = 1;
+    AdminLevel level = 2;
+}
+
+// CreateNotificationAccountRequest is request to create a notification/subscriber account
+message CreateNotificationAccountRequest {
+    repeated string channels = 1;
+    string account_id = 2;
+    string email = 3;
+    string phone = 4;
+    SendMethod send_method = 5;
+}
+
+// ListNotificationsRequest is request to retrieve notifications for a subscriber
+message ListNotificationsRequest {
+    string account_id = 1;
+    int32 page_token = 2;
+    int32 page_number = 3;
+}
+
+// ListNotificationsResponse is response containing a collection of notifications
+message ListNotificationsResponse {
+    repeated Notification notifications = 1;
+    int32 next_page_token = 2;
+}
+
+// MarkNotificationReadRequest is request to mark a notification as read
+message MarkNotificationReadRequest {
+    string account_id = 1;
+    string notification_id = 2;
+}
+
+// Manages and dispatches notifications in a network
+service NotificationService {
+    // Creates a default notification and subscriber channel account
+    rpc CreateNotificationAccount (CreateNotificationAccountRequest) returns (google.protobuf.Empty) {
+        // CreateNotificationAccount maps to HTTP POST method
+        // channels, account_id, email and phone maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/notifications/account"
+            body: "*"
+        };
+    }
+
+    // Publishes a notification that will be dispatched to its single destination
+    rpc Send (Notification) returns (google.protobuf.Empty) {
+        // Send maps to HTTP POST method
+        // Notification resource is contained in the request body
+        option (google.api.http) = {
+            post: "/api/umrs/notifications/Send",
+            body: "*"
+        };
+    }
+
+    // Publishes a notification on channel that is dispatched to multiple subscriber
+    rpc ChannelSend (Notification) returns (google.protobuf.Empty) {
+        // ChannelSend maps to HTTP POST method
+        // Notification resource is contained in the request body
+        option (google.api.http) = {
+            post: "/api/umrs/notifications/multi-Send",
+            body: "*"
+        };
+    }
+
+    // Retrieves collection of user notifications
+    rpc ListNotifications (ListNotificationsRequest) returns (ListNotificationsResponse) {
+        // ListSubscribers method maps to HTTP GET
+        // account_id maps to URL path parameter
+        option (google.api.http) = {
+            get: "/api/umrs/notifications/users/{account_id}",
+        };
+    }
+
+    // Marks a single notification as read
+    rpc MarkNotificationRead (MarkNotificationReadRequest) returns (google.protobuf.Empty) {
+        // MarkNotificationRead method maps to HTTP GET
+        // account_id and notification_id maps to URL path parameter
+        option (google.api.http) = {
+            get: "/api/umrs/notifications/users/{account_id}/read/{notification_id}",
+        };
+    }
+}

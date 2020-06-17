@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-hospital-chaincode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-hospital
+  template:
+    metadata:
+      labels:
+        app: umrs-hospital
+    spec:
+      containers:
+      - name: umrs-hospital-chaincode
+        image: gidyon/umrs-hospital-chaincode:v0.3.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        env:
+        - name: TEMPLATES_DIR
+          value: /app/templates/
+        volumeMounts:
+          - name: app-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+          - name: ledger-tls
+            mountPath: /app/secrets/keys/ledger/
+            readOnly: true
+          - name: notification-tls
+            mountPath: /app/secrets/keys/notification/
+            readOnly: true
+          - name: hospital-templates
+            mountPath: /app/templates/
+            readOnly: true
+          - name: app-config
+            mountPath: /app/configs/
+            readOnly: true
+          - name: mysql-creds-staging
+            mountPath: /app/secrets/mysql/
+            readOnly: true
+      volumes:
+      - name: ledger-tls
+        secret:
+         secretName: ledger-tls-v1
+      - name: notification-tls
+        secret:
+          secretName: notification-tls-v1
+      - name: app-tls
+        secret:
+          secretName: hospital-tls-v1
+      - name: hospital-templates
+        configMap:
+          name: hospital-templates-v1
+      - name: mysql-creds-staging
+        secret:
+          secretName: mysql-creds-staging
+      - name: app-config
+        configMap:
+          name: hospital-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: umrs-hospital
+  labels:
+    app: umrs-hospital
+spec:
+  clusterIP: None
+  selector:
+    app: umrs-hospital
+  ports:
+  - port: 443
+    name: https
+    targetPort: https
+    protocol: TCP
+  - port: 80
+    name: http
+    targetPort: https
+    protocol: TCP
+
+---
+
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "umrs-hospital-hpa"
+  namespace: "default"
+  labels:
+    app: "umrs-hospital"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "umrs-hospital-chaincode"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80

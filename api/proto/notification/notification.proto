@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+option go_package="notification";
+
+package umrs.notification;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// Notification is a message containing information that requires attention
+message Notification {
+    string notification_id = 1;
+    repeated string owner_ids = 2;
+    Priority priority = 3;
+    SendMethod send_method = 4;
+    NotificationContent content = 5;
+    int64 create_time_sec = 6;
+    oneof payload {
+        EmailNotification email_notification = 7;
+        SMSNotification sms_notification = 8;
+        USSDNotification ussd_notification = 9;
+        CallNotification call_notification = 10;
+        EmailAndSMSNotification email_and_sms = 11;
+    }
+    string bulk_channel = 12;
+    bool bulk = 13;
+    bool save = 14;
+    bool seen = 15;
+}
+
+// NotificationContent is content of a notification
+message NotificationContent {
+    string subject = 1;
+    string data = 2;
+}
+
+// EmailNotification is an email notification
+message EmailNotification {
+    repeated string to = 2;
+    string from = 1;
+    string subject = 3;
+    string body_content_type = 4;
+    string body = 5;
+}
+
+// SMSNotification is an SMS notification
+message SMSNotification {
+    repeated string destination_phone = 2;
+    string keyword = 1;
+    string message = 3;
+}
+
+// EmailAndSMSNotification is email and SMS notification combined
+message EmailAndSMSNotification {
+    EmailNotification email_notification = 1;
+    SMSNotification sms_notification = 2;
+}
+
+// USSDNotification is a USSD popup notification
+message USSDNotification {}
+
+// CallNotification is a call notification
+message CallNotification {}
+
+// Priority represents the level of priority for a notification
+enum Priority {
+    MEDIUM = 0;
+    HIGH = 1;
+    LOW = 2;
+}
+
+// SendMethod is the method used to send a notification
+enum SendMethod {
+    EMAIL = 0;
+    SMS = 1;
+    USSD = 2;
+    CALL = 3;
+    EMAIL_AND_SMS = 4;
+}
+
+// CreateNotificationAccountRequest is request to create a notification/subscriber account
+message CreateNotificationAccountRequest {
+    repeated string channels = 1;
+    string account_id = 2;
+    string email = 3;
+    string phone = 4;
+    SendMethod send_method = 5;
+}
+
+// ListNotificationsRequest is request to retrieve notifications for a subscriber
+message ListNotificationsRequest {
+    string account_id = 1;
+    int32 page_token = 2;
+    int32 page_number = 3;
+}
+
+// ListNotificationsResponse is response containing a collection of notifications
+message ListNotificationsResponse {
+    repeated Notification notifications = 1;
+    int32 next_page_token = 2;
+}
+
+// MarkNotificationReadRequest is request to mark a notification as read
+message MarkNotificationReadRequest {
+    string notification_id = 1;
+}
+
+// Manages and dispatches notifications in a network
+service NotificationService {
+    // Creates a default notification and subscriber channel account
+    rpc CreateNotificationAccount (CreateNotificationAccountRequest) returns (google.protobuf.Empty) {
+        // Maps to HTTP POST method
+        // Everything maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/notifications/account"
+            body: "*"
+        };
+    }
+
+    // Sends a notification to its destinations
+    rpc Send (Notification) returns (google.protobuf.Empty) {
+        // Maps to HTTP POST method
+        // Notification resource is contained in the request body
+        option (google.api.http) = {
+            post: "/api/umrs/notifications/send",
+            body: "*"
+        };
+    }
+
+    // Sends a notification to members of a particular channel
+    rpc ChannelSend (Notification) returns (google.protobuf.Empty) {
+        // Maps to HTTP POST method
+        // Notification resource is contained in the request body
+        option (google.api.http) = {
+            post: "/api/umrs/notifications/channel-send",
+            body: "*"
+        };
+    }
+
+    // Retrieves collection of user notifications
+    rpc ListNotifications (ListNotificationsRequest) returns (ListNotificationsResponse) {
+        // Maps to HTTP GET
+        // account_id maps to URL path parameter
+        option (google.api.http) = {
+            get: "/api/umrs/notifications/users/{account_id}/action/list",
+        };
+    }
+
+    // Marks a single notification as read
+    rpc MarkNotificationRead (MarkNotificationReadRequest) returns (google.protobuf.Empty) {
+        // Maps to HTTP GET
+        // notification_id maps to URL path parameter
+        option (google.api.http) = {
+            get: "/api/umrs/notifications/{notification_id}/action/read",
+        };
+    }
+}

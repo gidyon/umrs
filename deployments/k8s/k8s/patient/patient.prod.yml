@@ -1,0 +1,35 @@
+serviceVersion: v1/beta
+serviceName: umrs_patient
+servicePort: 443
+logging:
+  level: -1
+  timeFormat: 2006-01-02T15:04:05Z07:00
+  disabled: true
+security:
+  tlsCert: /app/secrets/keys/cert
+  tlsKey: /app/secrets/keys/key
+  serverName: patients.umrs.net
+databases:
+  sqlDatabase:
+    required: true
+    address: umrs-mysql:443
+    host: umrs-mysql
+    port: 443
+    userFile: /app/secrets/mysql/username
+    passwordFile: /app/secrets/mysql/password
+    schemaFile: /app/secrets/mysql/schema
+    metadata:
+      name: mysql
+      dialect: mysql
+      orm: gorm
+  redisDatabase:
+    required: false
+externalServices:
+- name: ledger
+  type: ledger
+  required: true
+  address: umrs-ledger:443
+  host: umrs-ledger
+  port: 443
+  tlsCert: /app/secrets/keys/ledger/cert
+  serverName: ledger.umrs.net

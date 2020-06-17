@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <style>
+            #container{
+                box-shadow: grey;
+                border: 1px solid grey;
+                padding: 10px;
+                margin: auto;
+                max-width: 450px;
+                font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
+            #profile{
+                border: 1px solid grey;
+            }
+            .profile-row{
+                display: flex;
+                border-top: 1px solid grey;
+            }
+            .profile-data {
+                width: 35%;
+                border-right: 1px solid grey;
+                padding: 2px;
+            }
+            .profile-value{
+                width: 65%;
+                padding: 2px;
+            }
+            .bold{
+                font-weight: bolder;
+            }
+            #consent-btn{
+                padding: 10px;
+                width: 100%;
+                outline: none;
+                font-size: 15px;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function grant(params) {
+                console.log()
+            }
+        </script>
+    </head>
+    <body>
+        <div id="container">
+            <div style="color: grey">Details</div>
+            <div id="profile" style="margin-bottom: 10px;">
+                <div class="profile-row">
+                    <div class="profile-data">FullName:</div>
+                    <div class="profile-value">{{.RequesterProfile.FullName}}</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-data">Organization:</div>
+                    <div class="profile-value">{{.RequesterProfile.OrganizationName}}</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-data">Role:</div>
+                    <div class="profile-value">{{.RequesterProfile.RoleAtOrganization}}</div>
+                </div>
+            </div>
+            <div id="image" style="display: block; text-align: center; width: 100%;">
+                <div style="display: inline-block; width: 180px; height: 180px">
+                    <img style="border-radius: 50%" width="100%" height="100%" src="{{.RequesterProfile.ProfileThumbUrl}}" alt="img">
+                </div>
+            </div>
+            <div id="consent" style="margin-top: 15px;">
+                <div>
+                    The above party wants to access your medical data. To give them permission, <span class="bold">click the button below</span>, to reject their request, <span class="bold">dont click the button</span>.
+                </div>
+                <div style="margin-top: 10px;">
+                    <div style="color: grey">Reason</div>
+                    <div>{{.Reason}}</div>
+                </div>
+                <div style="margin-top: 10px">
+                    <a href="{{.GrantAccessURL}}">
+                        <button id="consent-btn">Grant access</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

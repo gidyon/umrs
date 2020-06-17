@@ -1,0 +1,31 @@
+serviceVersion: v1/beta
+serviceName: umrs_notification
+servicePort: 9050
+logging:
+  level: 1
+  timeFormat: 2006-01-02T15:04:05Z07:00
+  disabled: true
+security:
+  tlsCert: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/cert.pem
+  tlsKey: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/key.pem
+  serverName: localhost
+databases:
+  sqlDatabase:
+    required: true
+    address: ec2-18-218-27-110.us-east-2.compute.amazonaws.com:30760
+    host: ec2-18-218-27-110.us-east-2.compute.amazonaws.com
+    port: 30760
+    user: root
+    password: '@@umrs2020'
+    schema: umrs-testing
+    metadata:
+      name: mysql
+      dialect: mysql
+      orm: gorm
+  redisDatabase:
+    required: true
+    address: localhost:6379
+    host: localhost
+    port: 6379
+    metadata:
+      useRediSearch: false

@@ -1,0 +1,373 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "notification.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/umrs/notifications/account": {
+      "post": {
+        "summary": "Creates a default notification and subscriber channel account",
+        "operationId": "CreateNotificationAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/notificationCreateNotificationAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "NotificationService"
+        ]
+      }
+    },
+    "/api/umrs/notifications/multi-Send": {
+      "post": {
+        "summary": "Publishes a notification on channel that is dispatched to multiple subscriber",
+        "operationId": "ChannelSend",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/notificationNotification"
+            }
+          }
+        ],
+        "tags": [
+          "NotificationService"
+        ]
+      }
+    },
+    "/api/umrs/notifications/Send": {
+      "post": {
+        "summary": "Publishes a notification that will be dispatched to its single destination",
+        "operationId": "Send",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/notificationNotification"
+            }
+          }
+        ],
+        "tags": [
+          "NotificationService"
+        ]
+      }
+    },
+    "/api/umrs/notifications/users/{account_id}": {
+      "get": {
+        "summary": "Retrieves collection of user notifications",
+        "operationId": "ListNotifications",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/notificationListNotificationsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "NotificationService"
+        ]
+      }
+    },
+    "/api/umrs/notifications/users/{account_id}/read/{notification_id}": {
+      "get": {
+        "summary": "Marks a single notification as read",
+        "operationId": "MarkNotificationRead",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "notification_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "NotificationService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "notificationCallNotification": {
+      "type": "object",
+      "title": "CallNotification is a call notification"
+    },
+    "notificationCreateNotificationAccountRequest": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "account_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "send_method": {
+          "$ref": "#/definitions/notificationSendMethod"
+        }
+      },
+      "title": "CreateNotificationAccountRequest is request to create a notification/subscriber account"
+    },
+    "notificationEmailAndSMSNotification": {
+      "type": "object",
+      "properties": {
+        "email_notification": {
+          "$ref": "#/definitions/notificationEmailNotification"
+        },
+        "sms_notification": {
+          "$ref": "#/definitions/notificationSMSNotification"
+        }
+      },
+      "title": "EmailAndSMSNotification is email and SMS notification combined"
+    },
+    "notificationEmailNotification": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "body_content_type": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      },
+      "title": "EmailNotification is an email notification"
+    },
+    "notificationListNotificationsResponse": {
+      "type": "object",
+      "properties": {
+        "notifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/notificationNotification"
+          }
+        },
+        "next_page_token": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "ListNotificationsResponse is response containing a collection of notifications"
+    },
+    "notificationNotification": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "type": "string",
+          "title": "Id of the notification"
+        },
+        "owner_id": {
+          "type": "string",
+          "title": "Owner of the notification"
+        },
+        "is_admin": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "Whether the owner is an admin"
+        },
+        "priority": {
+          "$ref": "#/definitions/notificationPriority",
+          "title": "The priority of the notification"
+        },
+        "send_method": {
+          "$ref": "#/definitions/notificationSendMethod",
+          "title": "Method the notification will be dispatched"
+        },
+        "content": {
+          "$ref": "#/definitions/notificationNotificationContent",
+          "title": "Notification content"
+        },
+        "create_time_sec": {
+          "type": "string",
+          "format": "int64",
+          "title": "Timestamp the notification was created in seconds"
+        },
+        "email_notification": {
+          "$ref": "#/definitions/notificationEmailNotification",
+          "title": "Email Notification"
+        },
+        "sms_notification": {
+          "$ref": "#/definitions/notificationSMSNotification",
+          "title": "SMS Notification"
+        },
+        "ussd_notification": {
+          "$ref": "#/definitions/notificationUSSDNotification",
+          "title": "USSDNotification notification"
+        },
+        "call_notification": {
+          "$ref": "#/definitions/notificationCallNotification",
+          "title": "Call Notification"
+        },
+        "email_and_sms": {
+          "$ref": "#/definitions/notificationEmailAndSMSNotification",
+          "title": "EmailAndSMSNotification Notification"
+        },
+        "bulk_channel": {
+          "type": "string",
+          "title": "Name of the bulk channel"
+        },
+        "bulk": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "Whether to send the sms to multiple destination"
+        },
+        "save": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "Whether to save the notification in database"
+        },
+        "seen": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "Whether the notification has been read"
+        }
+      },
+      "title": "Notification is a message containing notification information"
+    },
+    "notificationNotificationContent": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        }
+      },
+      "title": "NotificationContent is content of a notification"
+    },
+    "notificationPriority": {
+      "type": "string",
+      "enum": [
+        "MEDIUM",
+        "HIGH",
+        "LOW"
+      ],
+      "default": "MEDIUM",
+      "title": "Priority represents the level of priority for a notification"
+    },
+    "notificationSMSNotification": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "destination_phone": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "SMSNotification is an SMS notification"
+    },
+    "notificationSendMethod": {
+      "type": "string",
+      "enum": [
+        "EMAIL",
+        "SMS",
+        "USSD",
+        "CALL",
+        "EMAIL_AND_SMS"
+      ],
+      "default": "EMAIL",
+      "title": "SendMethod is the method used to send a notification"
+    },
+    "notificationUSSDNotification": {
+      "type": "object",
+      "title": "USSDNotification is a USSD popup notification"
+    }
+  }
+}

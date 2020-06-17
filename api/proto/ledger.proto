@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package umrs.ledger;
+
+option go_package="ledger";
+
+// Operation is the kind of operation being perfomed on the ledger
+enum Operation {
+    UKNOWN = 0;
+    ADD_PATIENT_TREATMENT_RECORD = 1;
+    ADD_PATIENT_MEDICAL_DATA = 2;
+    ADD_INSURANCE = 3;
+    ADD_HOSPITAL = 4;
+    UPDATE_PATIENT_TREATMENT_RECORD = 5;
+    UPDATE_PATIENT_MEDICAL_DATA = 6;
+    UPDATE_INSURANCE = 7;
+    UPDATE_HOSPITAL = 8;
+    DELETE_PATIENT_TREATMENT_RECORD = 9;
+    DELETE_PATIENT_MEDICAL_DATA = 10;
+    DELETE_INSURANCE = 11;
+    DELETE_HOSPITAL = 12;
+    GRANT_PERMISSION = 13;
+    REPORT_ISSUE = 14;
+    GENERIC = 15;
+}
+
+// Actor represents the actor group performing a given operation
+enum Actor {
+    UNKNOWN = 0;
+    PATIENT = 1;
+    ADMIN = 2;
+    INSURANCE = 3;
+    HOSPITAL = 4;
+    GOVERNMENT = 5;
+    THIRD_PARTY = 6;
+}
+
+// ActorPayload contains payload for an actor
+message ActorPayload {
+    Actor actor = 1;
+    string actor_id = 2;
+    string actor_names = 3;
+}
+
+// Transaction represent a log's payload that is added to the ledger
+message Transaction {
+    Operation operation = 1;
+    ActorPayload creator = 2;
+    ActorPayload patient = 3;
+    ActorPayload organization = 4;
+    bytes details = 5;
+}
+
+// OperationStatus is the status of an operation
+enum OperationStatus {
+    PENDING = 0;
+    COMPLETED = 1;
+    FAILED = 2;
+}
+
+// AddOperation data for mutation operation into the ledger
+message AddOperation {
+    string id = 1;
+    string details = 2;
+    string result = 3;
+    OperationStatus status = 4;
+    int64 timestamp_sec = 5;
+}
+
+// AddLogRequest is request to add a transaction log into ledger
+message AddLogRequest {
+    Transaction transaction = 2;
+}
+
+// AddLogResponse is response after a transaction log has been added to the ledger
+message AddLogResponse {
+    string operation_id = 2;
+}
+
+// Log contains a timestamp, hashes and transaction(s)
+message Log {
+    int64 timestamp = 1;
+    string hash = 2;
+    string prev_hash = 3;
+    Transaction payload = 4;
+}
+
+// Logs is a collection of logs
+message Logs {
+    repeated Log logs = 1;
+    int32 next_page_token = 2;
+}
+
+// Filter contains information for querying ledger
+message Filter {
+    bool filter = 1;
+    bool by_date = 2;
+    string start_date = 3;
+    string end_date = 4;
+    bool by_operation = 5;
+    repeated Operation operations = 6;
+    bool by_creator_actor = 7;
+    repeated Actor creator_actors = 8;
+    bool by_creator_id = 9;
+    repeated string creator_ids = 10;
+    bool by_patient_id = 11;
+    repeated string patient_ids = 12;
+    bool by_organization_id = 13;
+    repeated string organization_ids = 14;
+}
+
+// ListLogsRequest is request to list transaction logs
+message ListLogsRequest {
+    int32 page_token = 1;
+    int32 page_size = 2;
+    Filter filter = 3;
+}
+
+// GetLogRequest is request to retrieve a single transaction log
+message GetLogRequest {
+    string hash = 1;
+}
+
+// AuthorizeClientRequest is request to register a chaincode client
+message AuthorizeClientRequest {
+    string super_admin_id = 1;
+}
+
+// AuthorizeClientResponse is response after registering chaincode client
+message AuthorizeClientResponse {
+    string client_id = 1;
+}
+
+// GetLedgerStatRequest is request to get statistics of the ledger
+message GetLedgerStatRequest {}
+
+// LedgerStats is ledger statistics
+message LedgerStats {
+    int64 total_tx_logs = 1;
+    int64 last_updated_timestamp_sec = 2;
+    int64 last_verified_timestamp_sec = 3;
+    string last_insert_hash = 4;
+    bool valid = 5;
+}
+
+// Manages transaction logs in the ledger.
+service LedgerAPI {
+    // Adds a log into the ledger 
+    rpc AddLog (AddLogRequest) returns (AddLogResponse);
+
+    // Retrieve a single log
+    rpc GetLog (GetLogRequest) returns (Log);
+
+    // Retrieve a colection of logs
+    rpc ListLogs (ListLogsRequest) returns (Logs);
+
+    // Retrieve statistics of the ledger
+    rpc GetLedgerStat (GetLedgerStatRequest) returns (LedgerStats);
+}

@@ -1,0 +1,32 @@
+serviceVersion: v1/beta
+serviceName: umrs_notification
+servicePort: 443
+logging:
+  level: 1
+  timeFormat: 2006-01-02T15:04:05Z07:00
+  disabled: true
+security:
+  tlsCert: /app/secrets/keys/cert
+  tlsKey: /app/secrets/keys/key
+  serverName: notifications.umrs.net
+databases:
+  sqlDatabase:
+    required: true
+    address: umrs-mysql:443
+    host: umrs-mysql
+    port: 443
+    userFile: /app/secrets/mysql/username
+    passwordFile: /app/secrets/mysql/password
+    schemaFile: /app/secrets/mysql/schema
+    metadata:
+      name: mysql
+      dialect: mysql
+      orm: gorm
+  redisDatabase:
+    required: true
+    address: umrs-redis:443
+    host: umrs-redis
+    port: 443
+    metadata:
+      name: redis
+      useRediSearch: false

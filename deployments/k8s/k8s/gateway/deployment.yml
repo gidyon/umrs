@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-gateway
+  template:
+    metadata:
+      labels:
+        app: umrs-gateway
+    spec:
+      containers:
+      - name: umrs-gateway
+        image: gidyon/umrs-gateway:v0.6
+        args: ["--cors"]
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        env:
+        - name: STATIC_URL_PREFIX
+          value: /app/
+        - name: PUSH_FILE
+          value: /app/config/pushfiles/pushfiles
+        - name: SERVICES_FILE
+          value: /app/config/services/services
+        - name: TLS_CERT_FILE
+          value: /app/secrets/keys/cert
+        - name: TLS_KEY_FILE
+          value: /app/secrets/keys/key
+        - name: SERVICE_PORT
+          value: "443"
+        - name: STATIC_DIR
+          value: /app/dist
+        volumeMounts:
+          - name: app-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+          - name: notification-tls
+            mountPath: /app/secrets/keys/notification
+            readOnly: true
+          - name: account-tls
+            mountPath: /app/secrets/keys/account
+          - name: employment-tls
+            mountPath: /app/secrets/keys/employment
+          - name: hospital-tls
+            mountPath: /app/secrets/keys/hospital
+          - name: insurance-tls
+            mountPath: /app/secrets/keys/insurance
+          - name: permission-tls
+            mountPath: /app/secrets/keys/permission
+          - name: patient-tls
+            mountPath: /app/secrets/keys/patient
+          - name: pushfiles
+            mountPath: /app/config/pushfiles
+          - name: services
+            mountPath: /app/config/services
+      volumes:
+      - name: app-tls
+        secret:
+          secretName: umrs-gateway-tls
+      - name: notification-tls
+        secret:
+          secretName: umrs-notification-tls
+      - name: account-tls
+        secret:
+          secretName: umrs-account-tls
+      - name: employment-tls
+        secret:
+          secretName: umrs-employment-tls
+      - name: hospital-tls
+        secret:
+          secretName: umrs-hospital-tlsv1
+      - name: insurance-tls
+        secret:
+          secretName: umrs-insurance-tlsv1
+      - name: patient-tls
+        secret:
+          secretName: umrs-patient-tls
+      - name: permission-tls
+        secret:
+          secretName: umrs-permission-tlsv1
+      - name: pushfiles
+        configMap:
+          name: umrs-pushfiles-v1
+      - name: services
+        configMap:
+          name: umrs-services-v2

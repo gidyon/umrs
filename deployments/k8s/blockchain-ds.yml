@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ledger-umrs
+spec:
+  selector:
+    matchLabels:
+      name: ledger-pod
+  template:
+    metadata:
+      labels:
+        name: ledger-pod
+    spec:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      containers:
+      - name: ledger-pod
+        image: gidyon/ledger-umrs:v1
+        resources:
+          requests:
+            cpu: 250m
+            memory: 200Mi
+        volumeMounts:
+            - name: ledgerdb
+              mountPath: /app/storage/db
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: ledgerdb
+        hostPath:
+            path: /var/storage/ledgerdb

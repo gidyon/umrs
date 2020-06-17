@@ -1,0 +1,84 @@
+{{define "suspend"}}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style rel="stylesheet">
+            *{
+                font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            .container{
+                max-width: 600px;
+                margin: auto;
+                background-color: rgb(245, 245, 245);
+                padding: 5px 20px;
+            }
+            #main{
+                background-color: white;
+                padding: 20px;
+                font-size: 14px;
+            }
+            #header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 0;
+            }
+            h1 {
+                display: block;
+                font-size: 2em;
+                font-weight: bold;
+            }
+            .fluid{width: 100%;}
+            a{
+                text-decoration: none;
+                font-weight: bold;
+            }
+            #footer{
+                margin-top: 60px;
+            }
+            .center{
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            .fw-600{
+                font-weight: 600
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header class="fluid" id="header">
+                <div style="width: 30%; display: inline-flex;">
+                    <img src="https://umrs-8120.kxcdn.com/wp-content/uploads/2017/12/logo-black-retina-umrs.png" alt="umrs Net" height="30px" width="70px">
+                </div>
+            </header>
+
+            <div id="main">
+                <h1>Hospital Suspended</h1>
+                <div style="font-size: 14px;" class="fluid">
+                    <p>
+                        <span class="fw-600">{{.HospitalName}}</span> was suspended from the network.
+                    </p>
+                </div>
+                <div>
+                    <div class="reason">Reason</div>
+                    <div>{{.Content}}</div>
+                </div>
+                <br>
+            </div>    
+
+            <footer class="fluid" id="footer">
+                <div class="center">
+                    <a href="{{.WebsiteURL}}" style="color: teal">umrs Network</a>
+                </div class="center">
+                <div class="center" style="color: rgb(61, 59, 59); font-size: 14px;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus autem earum dolore doloremque voluptates unde deserunt ea nemo, exercitationem aliquid nostrum perspiciatis facilis, assumenda modi possimus recusandae laborum veritatis libero!</div>
+                <div class="center" style="color: rgb(40, 40, 40);">
+                    &copy;2020 — <strong>All Rights Reserved</strong>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>
+{{end}}

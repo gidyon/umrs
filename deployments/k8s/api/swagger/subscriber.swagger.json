@@ -1,0 +1,254 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "subscriber.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/umrs/subscribers/channel/{channel}": {
+      "get": {
+        "summary": "Lists subscribers for a channel",
+        "operationId": "ListSubscribers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subscriberListSubscribersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    },
+    "/api/umrs/subscribers/subscribe": {
+      "post": {
+        "summary": "Subscribes a user to a channel",
+        "operationId": "Subscribe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscriberSubscriberRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    },
+    "/api/umrs/subscribers/unsubscribe": {
+      "post": {
+        "summary": "Unsubscribes a user from a channel",
+        "operationId": "Unsubscribe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscriberSubscriberRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    },
+    "/api/umrs/subscribers/{account_id}": {
+      "get": {
+        "summary": "GetSubscriber retrieves information about a single subscriber",
+        "operationId": "GetSubscriber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subscriberSubscriber"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    },
+    "/api/umrs/subscribers/{account_id}/send_method": {
+      "post": {
+        "summary": "Retrieve send method for an account",
+        "operationId": "GetSendMethod",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subscriberGetSendMethodResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscriberGetSendMethodRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "notificationSendMethod": {
+      "type": "string",
+      "enum": [
+        "EMAIL",
+        "SMS",
+        "USSD",
+        "CALL",
+        "EMAIL_AND_SMS"
+      ],
+      "default": "EMAIL",
+      "title": "SendMethod is the method used to send a notification"
+    },
+    "subscriberGetSendMethodRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        }
+      },
+      "title": "GetSendMethodRequest is request to get the send method of a user"
+    },
+    "subscriberGetSendMethodResponse": {
+      "type": "object",
+      "properties": {
+        "send_method": {
+          "$ref": "#/definitions/notificationSendMethod"
+        }
+      },
+      "title": "GetSendMethodResponse is response containing the send method"
+    },
+    "subscriberListSubscribersResponse": {
+      "type": "object",
+      "properties": {
+        "subscribers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subscriberSubscriber"
+          }
+        },
+        "next_page_token": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "ListSubscribersResponse is response containing collection of subscribers"
+    },
+    "subscriberSubscriber": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "send_method": {
+          "$ref": "#/definitions/notificationSendMethod"
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "Subscriber represent an entity that can subscribes to multiple channels"
+    },
+    "subscriberSubscriberRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "channel": {
+          "type": "string"
+        },
+        "is_admin": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "SubscriberRequest request to subscribes a user to a channel"
+    }
+  }
+}

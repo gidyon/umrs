@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: umrs-redis
+  labels:
+    app: umrs-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-redis
+  template:
+    metadata:
+      labels:
+        app: umrs-redis
+    spec:
+      containers:
+      - name: umrs-redis
+        image: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        livenessProbe:
+          tcpSocket:
+            port: 6379

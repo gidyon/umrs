@@ -1,0 +1,383 @@
+syntax = "proto3";
+
+package umrs.account;
+
+option go_package="account";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// Account contains information about user entity. Can be a user or admin
+message Account {
+    string account_id = 1;
+    string national_id = 2;
+    string email = 3;
+    string phone = 4;
+    string first_name = 5;
+    string last_name = 6;
+    string birth_date = 7;
+    string gender = 8;
+    string nationality = 9;
+    string profile_url_thumb = 10;
+    string profile_url_normal = 11;
+    AccountType account_type = 12;
+    AccountState account_state = 13;
+    repeated string account_labels = 14;
+    repeated string trusted_devices = 15;
+}
+
+// PrivateAccount contains account sensitive information such as password and security QA
+message PrivateAccount {
+    string password = 1;
+    string confirm_password = 2;
+    string security_question = 3;
+    string security_answer = 4;
+}
+
+// AccountType is the type of an account
+enum AccountType {
+    ADMIN_VIEWER = 0;
+    ADMIN_OWNER = 1;
+    ADMIN_EDITOR = 2;
+    USER_OWNER = 3;
+}
+
+// AccountState represent the state of an account at any point
+enum AccountState {
+    BLOCKED = 0;
+    ACTIVE = 1;
+    INACTIVE = 2;
+}
+
+// SocialProfile is profile information from third parties
+message SocialProfile {
+    string first_name = 1;
+    string last_name = 2;
+    string phone_number = 3;
+    string email_address = 4;
+    string profile_url = 5;
+    string gender = 6;
+    string birth_date = 7;
+}
+
+// Google is request to login with google
+message Google {
+    SocialProfile google_profile = 1;
+}
+
+// Facebook is request to login with facebook
+message Facebook {    
+    SocialProfile fb_profile = 1;
+}
+
+// Twitter is request to login with twitter
+message Twitter {
+    SocialProfile twitter_profile = 1;
+}
+
+// Creds is request to login using national_id, email or phone number
+message Creds {
+    string phone = 1;
+    string email = 2;
+    string national_id = 3;
+    string password = 4;
+}
+
+// LoginRequest is request to login
+message LoginRequest {
+    // User can only use one of the options
+    oneof login {
+        Facebook facebook = 1;
+        Google google = 2;
+        Twitter twitter = 3;
+        Creds creds = 4;
+    }
+    string group = 5;
+}
+
+// LoginResponse is response after login
+message LoginResponse {
+    string token = 1;
+    string account_id = 2;
+    string account_state = 3;
+    string account_type = 4;
+    string account_group = 5;
+}
+
+// CreateRequest is request to create an account
+message CreateRequest {
+    string account_label = 1;
+    Account account = 2;
+    PrivateAccount private_account = 3;
+    bool by_admin = 4;
+    string admin_id = 5;
+}
+
+// CreateResponse is response after creating an account
+message CreateResponse {
+    string account_id = 1;
+}
+
+// ActivateRequest is request to activate an account
+message ActivateRequest {
+    string account_id = 1;
+    string token = 2;
+}
+
+// ActivateResponse is response after activating an account
+message ActivateResponse {}
+
+// UpdateRequest is request to update an account
+message UpdateRequest {
+    string account_id = 1;
+    Account account = 2;
+}
+
+// UpdatePrivateRequest is request to update an account private information
+message UpdatePrivateRequest {
+    string account_id = 1;
+    PrivateAccount private_account = 2;
+}
+
+// DeleteRequest is request to delete an account
+message DeleteRequest {
+    string account_id = 1;
+}
+
+// AccountView returns only subset of account information
+enum AccountView {
+    FULL_VIEW = 0;
+    LIST_VIEW = 1; // account_id, email, phone, first name and last name
+    SEARCH_VIEW = 2; // account_id, email, phone, first name and last name
+    BASIC_VIEW = 3; // account_id, email, phone, first name and last name
+}
+
+// GetRequest is request to retrieve account information
+message GetRequest {
+    string account_id = 1;
+    AccountView view = 2;
+    bool privileged = 3;
+    bool with_national_id = 4;
+}
+
+// ExistRequest is request to check if an account exists
+message ExistRequest {
+    string email = 1;
+    string phone = 2;
+    string national_id = 3;
+}
+
+// ExistResponse is response after checking whether account exist
+message ExistResponse {
+    bool exists = 1;
+}
+
+// ChangeAccountType is request to change account type
+message ChangeAccountTypeRequest {
+    string account_id = 1;
+    string super_admin_id = 2;
+    AccountType type = 3;
+}
+
+// Accounts is a collection of user accounts
+message Accounts {
+    int32 next_page_token = 1;
+    repeated Account accounts = 2;
+}
+
+// UndeleteRequest is request to undelete a deleted account
+message UndeleteRequest {
+    string account_id = 1;
+    string super_admin_id = 2;
+}
+
+// ChangeAccountRequest is request to mutate an account type
+message ChangeAccountRequest {
+    string account_id = 1;
+    string super_admin_id = 2;
+}
+
+// Criteria contains filter criteria filtering colections of accounts
+message Criteria {
+    bool filter = 1;
+    bool show_admins = 2;
+    bool show_users = 3;
+    bool show_active_accounts = 4;
+    bool show_inactive_accounts = 5;
+    bool show_blocked_accounts = 6;
+    bool show_males = 7;
+    bool show_females = 8;
+    bool filter_creation_date = 9;
+    int64 created_from = 10;
+    int64 created_until = 11;
+    bool filter_account_labels = 12;
+    repeated string labels = 13;
+}
+
+// ListAccountsRequest is request to retrieve collection of accounts
+message ListAccountsRequest {
+    int32 page_token = 1;
+    int32 page_size = 2;
+    Criteria list_criteria = 3;
+    AccountView view = 4;
+}
+
+// SearchAccountsRequest is request to search for accounts
+message SearchAccountsRequest {
+    int32 page_token = 1;
+    int32 page_size = 2;
+    Criteria search_criteria = 3;
+    string query = 4;
+    AccountView view = 5;
+}
+
+// Manages account activities
+service AccountAPI {
+    // Logins a user into their account
+    rpc Login (LoginRequest) returns (LoginResponse) {
+        // Map to HTTP POST method
+        // login maps to body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/accounts/login"
+            body: "*"
+        };
+    };
+
+    // Registers a new user
+    rpc Create(CreateRequest) returns (CreateResponse) {
+        // Map to HTTP POST method
+        // account label, account and private_profile  maps to body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/accounts/create"
+            body: "*"
+        };
+    };
+
+    // Activates a created account
+    rpc Activate (ActivateRequest) returns (ActivateResponse) {
+        // Map to HTTP GET method
+        // token and account_id maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/accounts/action/activate"
+        };
+    };
+
+    // Updates s user account
+    rpc Update (UpdateRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP PUT method
+        // account maps to URL query parameters
+        // account_id maps to URL path parameter
+        option (google.api.http) = {
+            put: "/api/umrs/accounts/{account_id}"
+            body: "*"
+        };
+    };
+
+    // Updates user private profile  account information
+    rpc UpdatePrivate (UpdatePrivateRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP PUT method
+        // private_account maps to URL query parameters
+        // account_id maps to URL path parameter
+        option (google.api.http) = {
+            put: "/api/umrs/accounts/{account_id}/private"
+            body: "*"
+        };
+    };
+
+    // Deletes a user account
+    rpc Delete (DeleteRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP DELETE method
+        // account_id maps to URL path parameters
+        option (google.api.http) = {
+            delete: "/api/umrs/accounts/{account_id}"
+        };
+    };
+
+    // Retrieves a user account
+    rpc Get (GetRequest) returns (Account) {
+        // Map to HTTP GET method
+        // account_id maps to URL path parameters
+        // view and privileged maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/accounts/{account_id}"
+        };
+    };
+
+    // Checks if an account exists
+    rpc Exist (ExistRequest) returns (ExistResponse) {
+        // Map to HTTP GET method
+        // national_id, phone and email maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/accounts/action/exists"
+        };
+    };
+
+    // Changes the account type
+    rpc ChangeAccountType (ChangeAccountTypeRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP POST method
+        // account_id, super_admin_id and level maps to request body
+        option (google.api.http) = {
+            post: "/api/umrs/accounts/change"
+            body: "*"
+        };
+    };
+
+    // Blocks an account
+    rpc BlockAccount (ChangeAccountRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP POST method
+        // account_id and super_admin_id maps to request body
+        option (google.api.http) = {
+            post: "/api/umrs/accounts/block"
+            body: "*"
+        };
+    };
+
+    // Unblocks a blocked account
+    rpc UnBlockAccount (ChangeAccountRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP POST method
+        // account_id and super_admin_id maps to request body
+        option (google.api.http) = {
+            post: "/api/umrs/accounts/unblock"
+            body: "*"
+        };
+    };
+
+    // Activates account; only admins
+    rpc AdminActivate (ChangeAccountRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP POST method
+        // account_id and super_admin_id maps to request body
+        option (google.api.http) = {
+            post: "/api/umrs/accounts/activate"
+            body: "*"
+        };
+    };
+
+    // Restores an account previously deleted
+    rpc Undelete (ChangeAccountRequest) returns (google.protobuf.Empty) {
+        // Map to HTTP POST method
+        // account_id and super_admin_id maps to request body
+        option (google.api.http) = {
+            post: "/api/umrs/accounts/undelete"
+            body: "*"
+        };
+    };
+
+    // Fetches collection of accounts
+    rpc ListAccounts (ListAccountsRequest) returns (Accounts) {
+        // Map to HTTP GET method
+        // page_token, page_size, view and criteria maps URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/accounts/action/list"
+        };
+    };
+
+    // Searches for accounts
+    rpc SearchAccounts (SearchAccountsRequest) returns (Accounts) {
+        // Map to HTTP GET method
+        // page_token, page_size, query, view and criteria maps URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/accounts/action/search"
+        };
+    };
+}

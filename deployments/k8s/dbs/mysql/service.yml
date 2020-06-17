@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: umrs-mysql
+  labels:
+    app: umrs
+spec:
+  type: ClusterIP
+  selector:
+    app: umrs-mysql
+  ports:
+  - port: 80
+    targetPort: mysql
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: mysql
+    protocol: TCP
+    name: https

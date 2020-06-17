@@ -1,0 +1,19 @@
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "umrs-permission-hpa"
+  namespace: "default"
+  labels:
+    app: "umrs-permission"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "umrs-permission-chaincode"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80

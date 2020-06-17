@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-insurance-chaincode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-insurance
+  template:
+    metadata:
+      labels:
+        app: umrs-insurance
+    spec:
+      containers:
+      - name: umrs-insurance-chaincode
+        image: gidyon/umrs-insurance-chaincode:v0.5
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        volumeMounts:
+          - name: app-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+          - name: ledger-tls
+            mountPath: /app/secrets/keys/ledger/
+            readOnly: true
+          - name: app-config
+            mountPath: /app/configs/
+            readOnly: true
+          - name: mysql-creds-staging
+            mountPath: /app/secrets/mysql/
+            readOnly: true
+      volumes:
+      - name: ledger-tls
+        secret:
+          secretName: umrs-ledger-tls
+      - name: app-tls
+        secret:
+          secretName: umrs-insurance-tlsv1
+      - name: mysql-creds-staging
+        secret:
+          secretName: mysql-creds-staging
+      - name: app-config
+        configMap:
+          name: umrs-insurance-configv1

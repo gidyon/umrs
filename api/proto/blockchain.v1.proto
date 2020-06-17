@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+package umrs.ledger;
+
+option go_package="ledger";
+
+// Operation is the kind of operation being perfomed on the ledger network
+enum Operation {
+    UKNOWN = 0;
+    ADD_PATIENT_TREATMENT_RECORD = 1;
+    ADD_PATIENT_MEDICAL_DATA = 2;
+    ADD_INSURANCE = 3;
+    ADD_HOSPITAL = 4;
+    UPDATE_PATIENT_MEDICAL_RECORD = 5;
+    UPDATE_PATIENT_MEDICAL_DATA = 6;
+    UPDATE_INSURANCE = 7;
+    UPDATE_HOSPITAL = 8;
+    DELETE_PATIENT_MEDICAL_RECORD = 9;
+    DELETE_PATIENT_MEDICAL_DATA = 10;
+    DELETE_INSURANCE = 11;
+    DELETE_HOSPITAL = 12;
+    GRANT_PERMISSION = 13;
+    REPORT_ISSUE = 14;
+    GENERIC = 15;
+}
+
+// Actor represents the actor group performing a given operation
+enum Actor {
+    UNKNOWN = 0;
+    PATIENT = 1;
+    ADMIN = 2;
+    INSURANCE = 3;
+    HOSPITAL = 4;
+    GOVERNMENT = 5;
+}
+
+// Transaction represent a block's payload that is added to the ledger
+message Transaction {
+    Actor actor = 1;
+    string actor_id = 2;
+    Operation operation = 3;
+    string patient_id = 4;
+    string organization_id = 5;
+    map<string, string> details = 6;
+}
+
+// AddBlockRequest is request to add block to ledger
+message AddBlockRequest {
+    Transaction transaction = 2;
+}
+
+// AddBlockResponse is response after a new block has been added to the ledger
+message AddBlockResponse {
+    string hash = 2;
+}
+
+// Block contains timestamp, hashes and transaction(s)
+message Block {
+    int64 timestamp = 1;
+    string hash = 2;
+    string prev_hash = 3;
+    Transaction payload = 4;
+}
+
+// Blocks is a collection of blocks
+message Blocks {
+    repeated Block blocks = 1;
+    int32 next_page_number = 2;
+}
+
+// Filter contains information for querying blocks
+message Filter {
+    bool filter = 1;
+    bool by_date = 2;
+    string start_date = 3;
+    string end_date = 4;
+    bool by_organization = 5;
+    repeated string organization_ids = 6;
+    bool by_operation = 7;
+    repeated Operation operations = 8;
+    bool by_actor = 9;
+    repeated Actor actors = 10;
+    bool by_actor_id = 11;
+    repeated string actor_ids = 12;
+    bool by_patient_id = 13;
+    repeated string patient_ids = 14;
+}
+
+// ListBlocksRequest is request to list blocks
+message ListBlocksRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+    Filter filter = 3;
+}
+
+// GetBlockRequest is request to retrieve a single block
+message GetBlockRequest {
+    string hash = 1;
+}
+
+// RegisterContractRequest is request to register the smart contract
+message RegisterContractRequest {
+    string super_admin_id = 1;
+    string contract_id = 2;
+}
+
+// RegisterContractResponse is response after registering smart contract
+message RegisterContractResponse {
+    string contract_id = 1;
+}
+
+// GetStatRequest is request to get statistics of a peer in a ledger
+message GetStatRequest {}
+
+// GetStatResponse is response containing statistics of a peer in ledger network
+message GetStatResponse {
+    string node_id = 1;
+    int32 total_peers = 2;
+    int32 total_blocks = 3;
+    int32 transactions_per_block = 4;
+    int32 total_transactions = 5;
+    int64 last_insert_id = 6;
+    int64 last_updated_time = 7;
+}
+
+// Runs a ledger network
+service ledger {
+    // Adds a block into the ledger
+    rpc AddBlock (AddBlockRequest) returns (AddBlockResponse);
+    // Retrieve a single block
+    rpc GetBlock (GetBlockRequest) returns (Block);
+    // Retrieve a colection of blocks
+    rpc ListBlocks (ListBlocksRequest) returns (Blocks);
+    // Authorizes a smart contract pr chaincodes that wants to interacts with the ledger
+    rpc RegisterContract (RegisterContractRequest) returns (RegisterContractResponse);
+    // Retrieve statistics of the ledger
+    rpc GetStat (GetStatRequest) returns (GetStatResponse);
+}

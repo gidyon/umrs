@@ -1,0 +1,57 @@
+services:
+  account:
+    urlPath: /api/umrs/accounts/
+    address: umrs-account:443
+    security:
+      tlsCert: /app/secrets/keys/account/cert
+      server: accounts.umrs.net
+  
+  notification:
+    urlPath: /api/umrs/notifications/
+    address: umrs-notification:443
+    security:
+      tlsCert: /app/secrets/keys/notification/cert
+      server: notifications.umrs.net
+
+  employment:
+    urlPath: /api/umrs/employments/
+    address: umrs-employment:443
+    security:
+      tlsCert: /app/secrets/keys/employment/cert
+      server: employments.umrs.net
+
+  patient:
+    urlPath: /api/umrs/patients/
+    address: umrs-patient:443
+    security:
+      tlsCert: /app/secrets/keys/patient/cert
+      server: patients.umrs.net
+
+  hospital:
+    urlPath: /api/umrs/hospitals/
+    address: umrs-hospital:443
+    security:
+      tlsCert: /app/secrets/keys/hospital/cert
+      server: hospitals.umrs.net
+
+  insurance:
+    urlPath: /api/umrs/insurances/
+    address: umrs-insurance:443
+    security:
+      tlsCert: /app/secrets/keys/insurance/cert
+      server: insurances.umrs.net
+
+  permission:
+    urlPath: /api/umrs/permissions/
+    address: umrs-permission:443
+    security:
+      tlsCert: /app/secrets/keys/permission/cert
+      server: permissions.umrs.net
+
+  # imageServer:
+  #   urlPath: /images/
+  #   address: localhost
+  #   security:
+  #     tlsKey: certs/key.pem
+  #     tlsCert: certs/cert.pem
+  #     server: localhost

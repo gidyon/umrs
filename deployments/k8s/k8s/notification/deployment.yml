@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-notification
+  template:
+    metadata:
+      labels:
+        app: umrs-notification
+    spec:
+      containers:
+      - name: umrs-notificatio
+        image: gidyon/umrs-notification:v0.2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        env:
+        - name: SMTP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: umrs-smtp-creds
+              key: port
+        - name: SMTP_HOST
+          valueFrom:
+            secretKeyRef:
+              name: umrs-smtp-creds
+              key: host
+        - name: SMTP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: umrs-smtp-creds
+              key: username
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: umrs-smtp-creds
+              key: password
+        volumeMounts:
+          - name: app-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+          - name: app-config
+            mountPath: /app/configs/
+          - name: mysql-creds-staging
+            mountPath: /app/secrets/mysql/
+            readOnly: true
+      volumes:
+      - name: app-tls
+        secret:
+          secretName: umrs-notification-tls
+      - name: mysql-creds-staging
+        secret:
+          secretName: mysql-creds-staging
+      - name: app-config
+        configMap:
+          name: umrs-notification-config

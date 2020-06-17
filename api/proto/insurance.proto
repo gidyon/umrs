@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+package umrs.insurance;
+
+option go_package="insurance";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// Insurance is an insurance company
+message Insurance {
+    string insurance_id = 1;
+    string insurance_name = 2;
+    string website_url = 3;
+    string logo_url = 4;
+    string about = 5;
+    string support_email = 6;
+    string support_tel_number = 7;
+    repeated string admin_emails = 8;
+    bool permission = 9;
+}
+
+// AddInsuranceRequest is request to add a new insurance
+message AddInsuranceRequest {
+    Insurance insurance = 1;
+}
+
+// HashResponse is response after adding a new insurance
+message HashResponse {
+    string insurance_id = 1;
+    string operation_hash = 2;
+}
+
+// GetInsuranceRequest is request to retrieve a single insurance
+message GetInsuranceRequest {
+    string insurance_id = 1;
+}
+
+// DeleteInsuranceRequest is request to delete insurance resource
+message DeleteInsuranceRequest {
+    string insurance_id = 1;
+    string insurance_name = 2;
+    string reason = 3;
+}
+
+// UpdateInsuranceRequest is request to update a insurance resource
+message UpdateInsuranceRequest {
+    string insurance_id = 1;
+    Insurance insurance = 2;
+    bool suspend = 3;
+    string reason = 4;
+}
+
+// ListInsurancesRequest is request to fetch a collection of insurances
+message ListInsurancesRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+}
+
+// SearchInsurancesRequest is request to search for insurances
+message SearchInsurancesRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+    string query = 3;
+}
+
+// Insurances is a collection of insurances
+message Insurances {
+    repeated Insurance insurances = 1;
+    string next_page_number = 2;
+}
+
+// CheckSuspensionRequest is request to check whether an insurance is suspended
+message CheckSuspensionRequest {
+    string insurance_id = 1;
+}
+
+// CheckSuspensionResponse is result after checking whether an insurance is suspended 
+message CheckSuspensionResponse {
+    bool suspended = 1;
+}
+
+// Manages insurances in a network
+service InsuranceAPI {
+    // Adds an insurance into network of insurances
+    rpc AddInsurance (AddInsuranceRequest) returns (HashResponse) {
+        // Maps to HTTP POST method
+        // Everything maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/insurances/add"
+            body: "*"
+        };
+    };
+
+    // Retrives a single insurance company
+    rpc GetInsurance (GetInsuranceRequest) returns (Insurance) {
+        // Maps to HTTP GET method
+        // insurance_id maps to URL path parameter
+        option (google.api.http) = {
+            get: "/api/umrs/insurances/{insurance_id}"
+        };
+    };
+
+    // Remove an insurance from network of insurances
+    rpc DeleteInsurance (DeleteInsuranceRequest) returns (google.protobuf.Empty) {
+        // Maps to HTTP DELETE method
+        // insurance_id maps to URL path parameter
+        // insurance_name and reason maps to URL query parameters
+        option (google.api.http) = {
+            delete: "/api/umrs/insurances/{insurance_id}"
+        };
+    };
+
+    // Updates a insurance resource
+    rpc UpdateInsurance (UpdateInsuranceRequest) returns (HashResponse) {
+        // Maps to HTTP PUT method
+        // insurance_id maps to URL path parameter
+        // insurance maps to request body
+        option (google.api.http) = {
+            put: "/api/umrs/insurances/{insurance_id}"
+            body: "*"
+        };
+    };
+
+    // Fetches a collection of insurances
+    rpc ListInsurances (ListInsurancesRequest) returns (Insurances) {
+        // Maps to HTTP GET method
+        // page_number and page_size maps to the URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/insurances/action/list"
+        };
+    };
+
+    // Searches for insurances resources
+    rpc SearchInsurances (SearchInsurancesRequest) returns (Insurances) {
+        // Maps to HTTP GET method
+        // query, page_number and page_size maps to the URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/insurances/action/search"
+        };
+    };
+
+    // Checks whether a insurance is suspended
+    rpc CheckSuspension (CheckSuspensionRequest) returns (CheckSuspensionResponse) {
+        // Maps to HTTP GET method
+        option (google.api.http) = {
+            get: "/api/umrs/insurances/action/suspended/{insurance_id}"
+        };
+    };
+}

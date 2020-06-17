@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: umrs-orderer
+  namespace: umrs
+  labels:
+    app: umrs-orderer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-orderer
+  template:
+    metadata:
+      labels:
+        app: umrs-orderer
+    spec:
+      containers:
+      - name: umrs-orderer
+        image: redis
+        resources:
+          requests:
+            cpu: 200m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        livenessProbe:
+          tcpSocket:
+            port: 6379

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: umrs-redis
+  labels:
+    app: umrs-redis
+spec:
+  ports:
+  - port: 443
+    name: https
+    targetPort: redis
+    protocol: TCP
+  - port: 80
+    name: http
+    targetPort: redis
+    protocol: TCP
+  selector:
+    app: umrs-redis

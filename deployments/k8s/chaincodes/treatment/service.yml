@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: umrs-treatment
+  labels:
+    app: umrs-treatment
+spec:
+  clusterIP: None
+  selector:
+    app: umrs-treatment
+  ports:
+  - port: 443
+    name: https
+    targetPort: https
+    protocol: TCP
+  - port: 80
+    name: http
+    targetPort: https
+    protocol: TCP

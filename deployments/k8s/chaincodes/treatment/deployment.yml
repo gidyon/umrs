@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umrs-treatment-chaincode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-treatment
+  template:
+    metadata:
+      labels:
+        app: umrs-treatment
+    spec:
+      containers:
+      - name: umrs-treatment-chaincode
+        image: gidyon/umrs-treatment-chaincode:v0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        volumeMounts:
+          - name: app-tls
+            mountPath: /app/secrets/keys/
+            readOnly: true
+          - name: ledger-tls
+            mountPath: /app/secrets/keys/ledger/
+            readOnly: true
+          - name: app-config
+            mountPath: /app/configs/
+            readOnly: true
+      volumes:
+      - name: ledger-tls
+        secret:
+          secretName: umrs-ledger-tls
+      - name: app-tls
+        secret:
+          secretName: umrs-treatment-tls
+      - name: app-config
+        configMap:
+          name: umrs-treatment-configv1
+          
+
+
+    

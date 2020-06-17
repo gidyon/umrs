@@ -1,0 +1,27 @@
+{
+  "Comment": "Create a subdomain NS record in the parent domain",
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "k8s.coffeeafrica.net",
+        "Type": "NS",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "ns-1300.awsdns-34.org"
+          },
+          {
+            "Value": "ns-322.awsdns-40.com"
+          },
+          {
+            "Value": "ns-1573.awsdns-04.co.uk"
+          },
+          {
+            "Value": "ns-1014.awsdns-62.net"
+          }
+        ]
+      }
+    }
+  ]
+}

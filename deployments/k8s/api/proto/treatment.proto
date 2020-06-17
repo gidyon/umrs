@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package umrs.treatment;
+
+option go_package="treatment";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// Actor performs or is affected by an action
+message Actor {
+    int32 group = 1;
+    string id = 2;
+    string full_name = 3;
+}
+
+// Hospital is the organization a patient receives treatment
+message Hospital {
+    string hospital_id = 1;
+    string hospital_name = 2;
+}
+
+// TreatmentData contains treatment information for a patient
+message TreatmentData {
+    string treatment_hash = 1;
+    string date = 2;
+    int64 timestamp = 3;
+    float entry_fee = 4;
+    map<string, string> triage_details = 5;
+    repeated string symptoms = 6;
+    string observations = 7;
+    repeated Test tests = 8;
+    string diagnosis = 9;
+    repeated Prescription prescriptions = 10;
+    bool hospitalized = 11;
+    string referrals = 12;
+    string additional_comments = 13;
+    map<string, string> additional_details = 14;
+}
+
+// Test is labaratory or radiology test on a patient
+message Test {
+    string type = 1;
+    string name = 2;
+    float cost = 3;
+    repeated string images_url = 4;
+    map<string, string> details = 5;
+}
+
+// Prescription is a drug prescription
+message Prescription {
+    string drug = 1;
+    float cost = 2;
+}
+
+// AddTreatmentRequest is request to add patient treatment information
+message AddTreatmentRequest {
+    Actor patient = 1;
+    Hospital hospital = 2;
+    TreatmentData treatment_info = 3;
+    Actor uploader = 4;
+}
+
+// UpdateTreatmentRequest is request to update treatment information
+message UpdateTreatmentRequest {
+    string treatment_hash = 1;
+    AddTreatmentRequest updated_treatment = 2;
+}
+
+// GetTreatmentRequest is request to get patient treatment
+message GetTreatmentRequest {
+    string treatment_hash = 1;
+    string patient_id = 2;
+    bool is_owner = 3;
+    string access_token = 4;
+}
+
+// GetTreatmentResponse response after getting treatment
+message GetTreatmentResponse {
+    string treatment_hash = 1;
+    int64 timestamp = 2;
+    Actor patient = 3;
+    Hospital hospital = 4;
+    Actor uploader = 5;
+    TreatmentData treatment_info = 6;
+}
+
+// HashResponse is response for operations that add items to the ledger
+message HashResponse {
+    string operation_hash = 1;
+    string patient_id = 2;
+}
+
+// Manages patients treatments
+service TreatmentAPI {
+    // Adds treatment information for a patient into the ledger
+    rpc AddTreatment (AddTreatmentRequest) returns (HashResponse) {
+        // Maps to HTTP POST
+        // Patient id maps to URL path parameter
+        // Everything else maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/patients/{patient.id}/treatments"
+            body: "*"
+        };
+    };
+
+    // Updates treatment information for a patient
+    rpc UpdateTreatment (UpdateTreatmentRequest) returns (HashResponse) {
+        // Maps to HTTP PUT
+        // Patient id maps to URL path parameter
+        // Everything else maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/patients/{updated_treatment.patient.id}/treatments"
+            body: "*"
+        };
+    };
+
+    // Retrieves treatment information
+    rpc GetTreatment (GetTreatmentRequest) returns (GetTreatmentResponse) {
+        // Maps to HTTP GET
+        // patient_id and treatment_hash maps to URL path parameter
+        // The rest request fields map to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/patients/{patient_id}/treatments/{treatment_hash}"
+        };
+    };
+}

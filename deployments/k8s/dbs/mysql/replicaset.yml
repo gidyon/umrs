@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: umrs-mysql
+  labels:
+    app: umrs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umrs-mysql
+  template:
+    metadata:
+      labels:
+        app: umrs-mysql
+    spec:
+      containers:
+      - name: mysql-database
+        image: mysql:8.0.18
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-creds-staging
+              key: password
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: database
+          mountPath: "/var/lib/mysql"
+      volumes:
+      - name: database
+        emptyDir: {}
+        # persistentVolumeClaim:
+        #   claimName: mysql-pvc
+      - name: mysql-creds-staging
+        secret:
+          secretName: mysql-creds-staging

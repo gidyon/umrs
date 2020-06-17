@@ -1,0 +1,233 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "insurance.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/umrs/insurances/action/list": {
+      "get": {
+        "summary": "Fetches collection of insurances",
+        "operationId": "ListInsurances",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/insuranceInsurances"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "InsuranceAPI"
+        ]
+      }
+    },
+    "/api/umrs/insurances/action/search": {
+      "get": {
+        "summary": "Searches for insurances resources",
+        "operationId": "SearchInsurances",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/insuranceInsurances"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "InsuranceAPI"
+        ]
+      }
+    },
+    "/api/umrs/insurances/add": {
+      "post": {
+        "summary": "Adds an insurance into network of insurances",
+        "operationId": "AddInsurance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/insuranceAddInsuranceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/insuranceAddInsuranceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "InsuranceAPI"
+        ]
+      }
+    },
+    "/api/umrs/insurances/{insurance_id}": {
+      "get": {
+        "summary": "Retrives a single insurance company",
+        "operationId": "GetInsurance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/insuranceInsurance"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "insurance_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "InsuranceAPI"
+        ]
+      },
+      "delete": {
+        "summary": "Remove an insurance from network of insurances",
+        "operationId": "DeleteInsurance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "insurance_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "insurance_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "InsuranceAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "insuranceAddInsuranceRequest": {
+      "type": "object",
+      "properties": {
+        "insurance": {
+          "$ref": "#/definitions/insuranceInsurance"
+        }
+      },
+      "title": "AddInsuranceRequest is request to add a new insurance"
+    },
+    "insuranceAddInsuranceResponse": {
+      "type": "object",
+      "properties": {
+        "insurance_id": {
+          "type": "string"
+        },
+        "operation_hash": {
+          "type": "string"
+        }
+      },
+      "title": "AddInsuranceResponse is response after adding a new insurance"
+    },
+    "insuranceInsurance": {
+      "type": "object",
+      "properties": {
+        "insurance_id": {
+          "type": "string"
+        },
+        "insurance_name": {
+          "type": "string"
+        },
+        "website_url": {
+          "type": "string"
+        },
+        "logo_url": {
+          "type": "string"
+        },
+        "about": {
+          "type": "string"
+        },
+        "support_email": {
+          "type": "string"
+        },
+        "support_tel_number": {
+          "type": "string"
+        }
+      },
+      "title": "Insurance is an insurance company"
+    },
+    "insuranceInsurances": {
+      "type": "object",
+      "properties": {
+        "insurances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/insuranceInsurance"
+          }
+        },
+        "next_page_number": {
+          "type": "string"
+        }
+      },
+      "title": "Insurances is a collection of insurances"
+    }
+  }
+}

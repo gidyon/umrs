@@ -1,0 +1,191 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "subscriber.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/umrs/subscribers/action/list": {
+      "get": {
+        "summary": "Lists subscribers for a channel",
+        "operationId": "ListSubscribers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subscriberListSubscribersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "channels",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    },
+    "/api/umrs/subscribers/subscribe": {
+      "post": {
+        "summary": "Subscribes a user to a channel",
+        "operationId": "Subscribe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscriberSubscriberRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    },
+    "/api/umrs/subscribers/unsubscribe": {
+      "post": {
+        "summary": "Unsubscribes a user from a channel",
+        "operationId": "Unsubscribe",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscriberSubscriberRequest"
+            }
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    },
+    "/api/umrs/subscribers/{account_id}": {
+      "get": {
+        "summary": "GetSubscriber retrieves information about a single subscriber",
+        "operationId": "GetSubscriber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/subscriberSubscriber"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SubscriberAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "subscriberListSubscribersResponse": {
+      "type": "object",
+      "properties": {
+        "subscribers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subscriberSubscriber"
+          }
+        },
+        "next_page_token": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "ListSubscribersResponse is response containing collection of subscribers"
+    },
+    "subscriberSubscriber": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "device_token": {
+          "type": "string"
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "Subscriber represent an entity that can subscribes to channels"
+    },
+    "subscriberSubscriberRequest": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "channel": {
+          "type": "string"
+        }
+      },
+      "title": "SubscriberRequest request to subscribes a user to a channel"
+    }
+  }
+}

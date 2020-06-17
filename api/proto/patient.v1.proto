@@ -1,0 +1,197 @@
+syntax = "proto3";
+
+package umrs.patient;
+
+option go_package="patient";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "ledger.proto";
+
+// State is patient state at a given time
+enum State {
+    UNKNOWN = 0;
+    ALIVE = 1;
+    DEAD = 2;
+}
+
+// MedicalData contains medical information for a patient
+message MedicalData {
+    string hospital_id = 1;
+    string hospital_name = 2;
+    string patient_name = 3;
+    State patient_state = 4;
+    map<string, string> details = 9;
+}
+
+// Treatment
+message Treatment {
+    oneof {
+        string value = 1;
+        repeated values = 2;
+        string value = 3;
+    }
+}
+
+// TreatmentData contains treatment information for a patient
+message TreatmentData {
+    string treatment_hash = 1;
+    string organization_name = 2;
+    string organization_id = 3;
+    string patient_name = 4;
+    string patient_id = 5;
+    string date = 6;
+    int64 timestamp = 7;
+    string treated_by = 8;
+    float entry_fee = 9;
+    map<string, string> triage_details = 9;
+    repeated string symptoms = 9;
+    string observations = 9;
+    repeated Test tests = 9;
+    map<string, string> additional_details = 9;
+}
+
+message Test {
+    string type = 1;
+    string name = 2;
+    string cost = 3;
+    string images = 4;
+}
+
+// OperationPayload contains payload for other operation
+message OperationPayload {
+    map<string, string> details = 1;
+}
+
+// MedicalActivity contains history of a patient
+message MedicalActivity {
+    string block_hash = 1;
+    string date = 2;
+    int64 timestamp = 2;
+    umrs.ledger.Operation operation = 2;
+    umrs.ledger.ActorPayload patient = 3;
+    umrs.ledger.ActorPayload creator = 4;
+    umrs.ledger.ActorPayload organization = 5;
+    oneof payload {
+        MedicalData medical_data = 6;
+        TreatmentData treatment = 7;
+        OperationPayload operation_payload = 8;
+    }
+}
+
+// MedicalHistory is a collection of patient medical history
+message MedicalHistory {
+    repeated MedicalActivity history = 1;
+    int32 next_page_number = 2;
+}
+
+// HashResponse is response for operations that add items to the ledger
+message HashResponse {
+    string operation_hash = 1;
+    string patient_id = 2;
+}
+
+// AddPatientMedDataRequest is request to add patient medical data to database and ledger
+message AddPatientMedDataRequest {
+    string patient_id = 1;
+    MedicalData medical_data = 2;
+    umrs.ledger.ActorPayload actor = 3;
+}
+
+// GetPatientMedDataRequest is request to retrieve a single medical data
+message GetPatientMedDataRequest {
+    string patient_id = 1;
+    bool is_owner = 2;
+    string access_token = 3;
+}
+
+// AddTreatmentRequest is request to add patient treatment data into the ledger
+message AddTreatmentRequest {
+    string patient_id = 1;
+    TreatmentData treatment_info = 2;
+    umrs.ledger.ActorPayload actor = 3;
+}
+
+// GetTreatmentRequest is request to get patient treatment
+message GetTreatmentRequest {
+    string treatment_hash = 1;
+    string patient_id = 2;
+    bool is_owner = 3;
+    string access_token = 4;
+}
+
+// GetMedicalHistoryRequest is request to get medical history of a patient
+message GetMedicalHistoryRequest {
+    string patient_id = 1;
+    string huduma_number = 2;
+    int32 page_number = 3;
+    int32 page_size = 4;
+    umrs.ledger.Filter filter = 5;
+    bool is_owner = 6;
+    string access_token = 7;
+}
+
+// Manages patient medical data and treatment history
+service PatientAPI {
+    // Adds patient medical data like blood group, skin color, allergies to the database
+    rpc AddPatientMedData (AddPatientMedDataRequest) returns (HashResponse) {
+        // Maps to HTTP POST
+        // patient_id maps to URL path parameter
+        // Everything else maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/patients/{patient_id}/medicaldata"
+            body: "*"
+        };
+    };
+
+    // Updates an existing patient medical data
+    rpc UpdatePatientMedData (AddPatientMedDataRequest) returns (HashResponse) {
+        // Maps to HTTP PUT
+        // patient_id maps to URL path parameter
+        // Everything else maps to the body of the request
+        option (google.api.http) = {
+            put: "/api/umrs/patients/{patient_id}/medicaldata"
+            body: "*"
+        };
+    };
+
+    // Retrieves a single patients medical data
+    rpc GetPatientMedData (GetPatientMedDataRequest) returns (MedicalData) {
+        // Maps to HTTP GET
+        // patient_id maps to URL path parameter
+        // The rest request fields map to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/patients/{patient_id}/medicaldata"
+        };
+    };
+
+    // Adds treatment information for a patient into the ledger
+    rpc AddTreatment (AddTreatmentRequest) returns (HashResponse) {
+        // Maps to HTTP POST
+        // Everything maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/patients/{patient_id}/treatments"
+            body: "*"
+        };
+    };
+
+    // Retrieves treatment data for a patient from ledger
+    rpc GetTreatment (GetTreatmentRequest) returns (TreatmentData) {
+        // Maps to HTTP GET
+        // patient_id and treatment_hash maps to URL path parameter
+        // The rest request fields map to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/patients/{patient_id}/treatments/{treatment_hash}"
+        };
+    };
+
+    // Fetches history of patient treatments from ledger
+    rpc GetMedicalHistory (GetMedicalHistoryRequest) returns (MedicalHistory) {
+        // Maps to HTTP GET
+        // patient_id maps to URL path parameter
+        // The rest request fields map to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/patients/{patient_id}/history"
+        };
+    };
+}

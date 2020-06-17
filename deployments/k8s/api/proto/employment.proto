@@ -1,0 +1,175 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+// Employment contains employment information
+message Employment {
+    string account_id = 1;
+    string full_name = 2;
+    string profile_thumb_url = 3;
+    string employment_id = 4;
+    EmploymentType employment_type = 5;
+    string joined_date = 6;
+    string organization_type = 7;
+    string organization_name = 8;
+    string organization_id = 9;
+    string role_at_organization = 10;
+    string work_email = 11;
+    bool employment_verified = 12;
+    bool still_employed = 13;
+    bool is_recent = 14;
+}
+
+// EmploymentType represent the type of an employment
+enum EmploymentType {
+    UNKNOWN = 0;
+    PERMANENT = 1;
+    CASUAL = 2;
+    APPRENTICE = 3;
+    CONTRACTUAL = 4;
+}
+
+// Actor represent an actor performing an action
+message Actor {
+    int32 actor = 1;
+    string actor_id = 2;
+}
+
+// AddEmploymentRequest is request to add new employment information
+message AddEmploymentRequest {
+    Employment employment = 1;
+    Actor actor = 2;
+}
+
+// AddEmploymentResponse is response after adding an employment
+message AddEmploymentResponse {
+    string employment_id = 1;
+}
+
+// UpdateEmploymentRequest is request to update employment
+message UpdateEmploymentRequest {
+    Employment employment = 1;
+    Actor actor = 2;
+}
+
+// GetRecentEmploymentRequest is request to retrieve most recent employment
+message GetRecentEmploymentRequest {
+    string account_id = 1;
+    Actor actor = 2;
+}
+
+// GetEmploymentRequest is request to retrieve a single employment
+message GetEmploymentRequest {
+    string employment_id = 1;
+    Actor actor = 2;
+}
+
+// DeleteEmploymentRequest is request to delete employment
+message DeleteEmploymentRequest {
+    string employment_id = 1;
+    Actor actor = 2;
+}
+
+// GetEmploymentsRequest is request to retrieve employment history
+message GetEmploymentsRequest {
+    string account_id = 1;
+    int32 page_size = 2;
+    int32 page_number = 3;
+    Actor actor = 4;
+}
+
+// Employments is a collection of employments
+message Employments {
+    repeated Employment employments = 1;
+    int32 next_page_number = 2;
+}
+
+// CheckEmploymentStatusRequest is request to check if an employer is employed
+message CheckEmploymentStatusRequest {
+    string account_id = 1;
+    Actor actor = 2;
+}
+
+// CheckEmploymentStatusResponse is response after checking if an employee is employed
+message CheckEmploymentStatusResponse {
+    bool is_employed = 1;
+    bool is_verified = 2;
+}
+
+// EmploymentAPI manages employments
+service EmploymentAPI {
+    // Adds a new employment for a employee
+    rpc AddEmployment (AddEmploymentRequest) returns (AddEmploymentResponse) {
+        // Maps to HTTP POST
+        // employment.account_id maps to URL path parameter
+        // Everything else maps to the body of the request
+        option (google.api.http) = {
+            post: "/api/umrs/employments/accounts/{employment.account_id}"
+            body: "*"
+        };
+    };
+
+    // Updates an existing employment for an employer
+    rpc UpdateEmployment (UpdateEmploymentRequest) returns (google.protobuf.Empty) {
+        // Maps to HTTP PUT
+        // employment.employment_id and  maps to URL path parameter
+        // Everything else maps to the body of the request
+        option (google.api.http) = {
+            put: "/api/umrs/employments/{employment.employment_id}"
+            body: "*"
+        };
+    };
+
+    // Retrieve a single employment
+    rpc GetEmployment (GetEmploymentRequest) returns (Employment) {
+        // Maps to HTTP GET
+        // employment_id maps to URL path parameter
+        // actor maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/employments/{employment_id}"
+        };
+    };
+
+    // Removes an employment data 
+    rpc DeleteEmployment (DeleteEmploymentRequest) returns (google.protobuf.Empty) {
+        // Maps to HTTP DELETE
+        // employment_id maps to URL path parameter
+        // actor maps to URL query parameters
+        option (google.api.http) = {
+            delete: "/api/umrs/employments/{employment_id}"
+        };
+    };
+
+    // Retrieve most recent employment
+    rpc GetRecentEmployment (GetRecentEmploymentRequest) returns (Employment) {
+        // Maps to HTTP GET
+        // account_id maps to URL path parameter
+        // actor maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/employments/accounts/{account_id}/recent"
+        };
+    };
+
+    // Retrieve list of employments
+    rpc GetEmployments (GetEmploymentsRequest) returns (Employments) {
+        // Maps to HTTP GET
+        // account_id maps to URL path parameter
+        // page_size and page_number are passed in URL Query parameters
+        // actor maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/employments/accounts/{account_id}"
+        };
+    };
+
+    // Checks whether the user account is employed
+    rpc CheckEmploymentStatus (CheckEmploymentStatusRequest) returns (CheckEmploymentStatusResponse) {
+        // Maps to HTTP GET
+        // account_id maps to URL path parameter
+        // actor maps to URL query parameters
+        option (google.api.http) = {
+            get: "/api/umrs/employments/accounts/{account_id}/check"
+        };
+    };
+}

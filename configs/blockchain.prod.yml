@@ -1,0 +1,23 @@
+serviceVersion: v1/beta
+serviceName: umrs_ledger
+servicePort: 9090
+logging:
+  level: 1
+  timeFormat: 2006-01-02T15:04:05Z07:00
+  disabled: true
+security:
+  tlsCert: /app/certs/ledger/cert.pem
+  tlsKey: /app/certs/ledger/key.pem
+  serverName: ledger.umrs.co.ke
+databases:
+  sqlDatabase:
+    required: false
+  redisDatabase:
+    required: true
+    address: orderer:6379
+    host: orderer
+    port: 6379
+    schema: db
+    metadata:
+      name: redis
+      useRediSearch: false

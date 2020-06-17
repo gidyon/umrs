@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <style>
+            #container{
+                box-shadow: grey;
+                border: 1px solid grey;
+                padding: 10px;
+                margin: auto;
+                max-width: 400px;
+                /* font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
+                /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
+                /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            #profile{
+                border: 1px solid grey;
+            }
+            .profile-row{
+                display: flex;
+                border-top: 1px solid grey;
+            }
+            .profile-data {
+                width: 35%;
+                border-right: 1px solid grey;
+                padding: 2px;
+            }
+            .profile-value{
+                width: 65%;
+                padding: 2px;
+            }
+            .bold{
+                font-weight: bolder;
+            }
+            #consent-btn{
+                padding: 10px;
+                width: 100%;
+                outline: none;
+                font-size: 15px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div style="color: grey">Details</div>
+            <div id="profile" style="margin-bottom: 10px;">
+                <div class="profile-row">
+                    <div class="profile-data">FullName:</div>
+                    <div class="profile-value">Gideon Kamau</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-data">Organization:</div>
+                    <div class="profile-value">Mary Help of the Sick</div>
+                </div>
+                <div class="profile-row">
+                    <div class="profile-data">Role:</div>
+                    <div class="profile-value">Physician</div>
+                </div>
+            </div>
+            <div id="image" style="display: block; text-align: center; width: 100%;">
+                <div style="display: inline-block; width: 180px; height: 180px">
+                    <img style="border-radius: 50%" width="100%" height="100%" src="https://pbs.twimg.com/profile_images/1052277993811431426/2pU95l5N.jpg" alt="Thumb">
+                </div>
+            </div>
+            <div id="consent" style="margin-top: 15px;">
+                <div>
+                    The above party wants to access your medical data. To give them permission, <span class="bold">click the button below</span>, to reject their request, <span class="bold">dont click the button</span>.
+                </div>
+                <div style="margin-top: 10px;">
+                    <div style="color: grey">Reason</div>
+                    <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi perferendis illo culpa sed reiciendis iusto asperiores quo! Inventore, rem! Qui?</div>
+                </div>
+                <div style="margin-top: 10px">
+                    <a href="http://google.com">
+                        <button id="consent-btn">Grant access</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

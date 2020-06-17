@@ -1,0 +1,23 @@
+services:
+    accounts:
+      pathPrefix: /api/umrs/accounts/
+      address: localhost:7070
+      security:
+        tlsCert: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/cert.pem
+        server: localhost
+    
+    notifications:
+      pathPrefix: /api/umrs/notifications/
+      address: localhost:9090
+      security:
+        tlsCert: /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/cert.pem
+        server: localhost
+  
+    # imageServer:
+    #   pathPrefix: /images/
+    #   address: localhost
+    #   port: 400
+    #   security:
+    #     tlsKey:  /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/key.pem
+    #     tlsCert:  /home/gideon/go/src/github.com/gidyon/umrs/certs/ledger/cert.pem
+    #     server: localhost
